@@ -1,5 +1,5 @@
 from wave_sim2d.wave_simulation import SceneObject
-import cupy as cp
+import torch
 import numpy as np
 import cv2
 
@@ -17,15 +17,22 @@ class StaticRefractiveIndex(SceneObject):
                                        Note that values below 0.9 are clipped to prevent the simulation
                                        from becoming instable
         """
+        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
         shape = refractive_index_field.shape
-        self.c = cp.ones((shape[0], shape[1]), dtype=cp.float32)
-        self.c = 1.0/cp.clip(cp.array(refractive_index_field), 0.9, 10.0)
+        self.c = torch.ones((shape[0], shape[1]), dtype=torch.float32, device=self.device)
+        
+        # Convert input to tensor if needed
+        if not isinstance(refractive_index_field, torch.Tensor):
+            refractive_index_field = torch.from_numpy(refractive_index_field).float()
+        refractive_index_field = refractive_index_field.to(self.device)
+        
+        self.c = 1.0 / torch.clamp(refractive_index_field, 0.9, 10.0)
 
-    def render(self, field: cp.ndarray, wave_speed_field: cp.ndarray, dampening_field: cp.ndarray):
+    def render(self, field: torch.Tensor, wave_speed_field: torch.Tensor, dampening_field: torch.Tensor):
         assert (wave_speed_field.shape == self.c.shape)
         wave_speed_field[:] = self.c
 
-    def update_field(self, field: cp.ndarray, t):
+    def update_field(self, field: torch.Tensor, t):
         pass
 
     def render_visualization(self, image: np.ndarray):
@@ -47,6 +54,7 @@ class StaticRefractiveIndexPolygon(SceneObject):
             vertices (list or np.ndarray): A list or array of (x, y) coordinates defining the polygon.
             refractive_index (float): The refractive index of the polygon. Values are clamped to [0.9, 10.0].
         """
+        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
         self.vertices = np.array(vertices, dtype=np.float32)
         self.refractive_index = min(max(refractive_index, 0.9), 10.0)
         self._cached_coords = None
@@ -62,8 +70,8 @@ class StaticRefractiveIndexPolygon(SceneObject):
 
         Returns:
             tuple: A tuple containing:
-                - coords (tuple of cp.ndarray): (y_coordinates, x_coordinates) of the polygon pixels within the field.
-                - mask_values (cp.ndarray): Corresponding anti-aliased mask values (0.0 to 1.0).
+                - coords (tuple of torch.Tensor): (y_coordinates, x_coordinates) of the polygon pixels within the field.
+                - mask_values (torch.Tensor): Corresponding anti-aliased mask values (0.0 to 1.0).
         """
         if self._cached_coords is not None and self._cached_field_shape == field_shape:
             return self._cached_coords, self._cached_mask_values
@@ -103,12 +111,13 @@ class StaticRefractiveIndexPolygon(SceneObject):
         valid_global_x = global_coords_x[in_bounds]
         valid_mask_values = mask_values[in_bounds]
 
-        self._cached_coords = (cp.array(valid_global_y), cp.array(valid_global_x))
-        self._cached_mask_values = cp.array(valid_mask_values, dtype=cp.float32)
+        self._cached_coords = (torch.from_numpy(valid_global_y).to(self.device), 
+                              torch.from_numpy(valid_global_x).to(self.device))
+        self._cached_mask_values = torch.from_numpy(valid_mask_values).to(torch.float32).to(self.device)
         self._cached_field_shape = field_shape
         return self._cached_coords, self._cached_mask_values
 
-    def render(self, field: cp.ndarray, wave_speed_field: cp.ndarray, dampening_field: cp.ndarray):
+    def render(self, field: torch.Tensor, wave_speed_field: torch.Tensor, dampening_field: torch.Tensor):
         coords, mask_values = self._create_polygon_data(wave_speed_field.shape)
 
         # Use advanced indexing to update the field and perform alpha blending
@@ -116,7 +125,7 @@ class StaticRefractiveIndexPolygon(SceneObject):
         wave_speed_field[coords[0], coords[1]] = (bg_wave_speed * (1.0 - mask_values) +
                                                   mask_values / self.refractive_index)
 
-    def update_field(self, field: cp.ndarray, t):
+    def update_field(self, field: torch.Tensor, t):
         pass
 
     def render_visualization(self, image: np.ndarray):

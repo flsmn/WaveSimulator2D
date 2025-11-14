@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))  # noqa
 
 import numpy as np
-import cupy as cp
+import torch
 import math
 import cv2
 
@@ -37,9 +37,10 @@ class MovingCharge(sim.SceneObject):
         self.frequency = frequency
         self.amplitude = amplitude
         self.size = 11
+        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
 
         # create a smooth source shape
-        self.source_array = cp.array(gaussian_kernel(self.size, self.size/3))
+        self.source_array = torch.from_numpy(gaussian_kernel(self.size, self.size/3)).to(torch.float32).to(self.device)
 
     def render(self, field, wave_speed_field, dampening_field):
         # no changes to the refractive index or dampening field required for this class
@@ -55,7 +56,7 @@ class MovingCharge(sim.SceneObject):
         # copy source shape to current position into field
         wh = self.source_array.shape[1]//2
         hh = self.source_array.shape[0]//2
-        field[y-hh:y+hh+1, x-wh:x+wh+1] += self.source_array * fade_in * 0.25
+        field[int(y)-hh:int(y)+hh+1, int(x)-wh:int(x)+wh+1] += self.source_array * fade_in * 0.25
 
 
 def build_scene():

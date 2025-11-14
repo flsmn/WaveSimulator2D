@@ -1,8 +1,16 @@
-import cupy
+import torch
+import torch.nn.functional as F
 import numpy as np
-import cupy as cp
-import cupyx.scipy.signal
 from abc import ABC, abstractmethod
+
+
+# Device management: prefer MPS on Apple Silicon, fall back to CPU
+def _get_device():
+    """Get the appropriate device for tensor operations."""
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    else:
+        return torch.device("cpu")
 
 
 class SceneObject(ABC):
@@ -12,12 +20,12 @@ class SceneObject(ABC):
     simulated field and draw their contribution to the wave speed field and dampening field each frame """
 
     @abstractmethod
-    def render(self, field: cupy.ndarray, wave_speed_field: cupy.ndarray, dampening_field: cupy.ndarray):
+    def render(self, field: torch.Tensor, wave_speed_field: torch.Tensor, dampening_field: torch.Tensor):
         """ renders the scene objects contribution to the wave speed field and dampening field """
         pass
 
     @abstractmethod
-    def update_field(self, field: cupy.ndarray, t):
+    def update_field(self, field: torch.Tensor, t):
         """ performs updates to the field itself, e.g. for adding sources """
         pass
 
@@ -39,29 +47,25 @@ class WaveSimulator2D:
         @param w: Width of the simulation grid.
         @param h: Height of the simulation grid.
         """
+        self.device = _get_device()
         self.global_dampening = 1.0
-        self.c = cp.ones((h, w), dtype=cp.float32)                      # wave speed field (from refractive indices)
-        self.d = cp.ones((h, w), dtype=cp.float32)                      # dampening field
-        self.u = cp.zeros((h, w), dtype=cp.float32)                     # field values
-        self.u_prev = cp.zeros((h, w), dtype=cp.float32)                # field values of prev frame
+        self.c = torch.ones((h, w), dtype=torch.float32, device=self.device)                      # wave speed field (from refractive indices)
+        self.d = torch.ones((h, w), dtype=torch.float32, device=self.device)                      # dampening field
+        self.u = torch.zeros((h, w), dtype=torch.float32, device=self.device)                     # field values
+        self.u_prev = torch.zeros((h, w), dtype=torch.float32, device=self.device)                # field values of prev frame
 
         if initial_field is not None:
             assert w == initial_field.shape[1] and h == initial_field.shape[2], 'width/height of initial field invalid'
-            self.u[:] = initial_field
-            self.u_prev[:] = initial_field
+            self.u[:] = torch.from_numpy(initial_field).to(self.device)
+            self.u_prev[:] = torch.from_numpy(initial_field).to(self.device)
 
-        # Define Laplacian kernel
-        self.laplacian_kernel = cp.array([[0.066, 0.184, 0.066],
-                                          [0.184, -1.0, 0.184],
-                                          [0.066, 0.184, 0.066]])
-
-        # self.laplacian_kernel = cp.array([[0.05, 0.2, 0.05],
-        #                           [0.2, -1.0, 0.2],
-        #                           [0.05, 0.2, 0.05]])
-
-        # self.laplacian_kernel = cp.array([[0.103, 0.147, 0.103],
-        #                                   [0.147, -1.0, 0.147],
-        #                                   [0.103, 0.147, 0.103]])
+        # Define Laplacian kernel as a 2D convolution kernel
+        # Shape: (1, 1, 3, 3) for 2D convolution with PyTorch
+        laplacian_weights = [[0.066, 0.184, 0.066],
+                            [0.184, -1.0, 0.184],
+                            [0.066, 0.184, 0.066]]
+        self.laplacian_kernel = torch.tensor(laplacian_weights, dtype=torch.float32, device=self.device)
+        self.laplacian_kernel = self.laplacian_kernel.unsqueeze(0).unsqueeze(0)  # Shape: (1, 1, 3, 3)
 
         self.t = 0
         self.dt = 1.0
@@ -78,22 +82,24 @@ class WaveSimulator2D:
         """
         Update the simulation field based on the wave equation.
         """
-        # calculate laplacian using convolution
-        laplacian = cupyx.scipy.signal.convolve2d(self.u, self.laplacian_kernel, mode='same', boundary='fill')
+        # Calculate laplacian using convolution
+        # Pad the field to maintain 'same' mode behavior
+        u_padded = F.pad(self.u.unsqueeze(0).unsqueeze(0), (1, 1, 1, 1), mode='constant', value=0.0)
+        laplacian = F.conv2d(u_padded, self.laplacian_kernel, padding=0).squeeze(0).squeeze(0)
 
-        # update field
+        # Update field
         v = (self.u - self.u_prev) * self.d * self.global_dampening
         r = (self.u + v + laplacian * (self.c * self.dt)**2)
 
-        self.u_prev[:] = self.u
+        self.u_prev[:] = self.u.clone()
         self.u[:] = r
 
         self.t += self.dt
 
     def update_scene(self):
         # clear wave speed field and dampening field
-        self.c.fill(1.0)
-        self.d.fill(1.0)
+        self.c.fill_(1.0)
+        self.d.fill_(1.0)
 
         for obj in self.scene_objects:
             obj.render(self.u, self.c, self.d)
@@ -104,7 +110,7 @@ class WaveSimulator2D:
     def get_field(self):
         """
         Get the current state of the simulation field.
-        @return: A 2D array representing the simulation field.
+        @return: A 2D tensor representing the simulation field.
         """
         return self.u
 

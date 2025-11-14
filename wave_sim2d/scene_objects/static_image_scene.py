@@ -1,7 +1,7 @@
 from wave_sim2d.wave_simulation import SceneObject
 
 import numpy as np
-import cupy as cp
+import torch
 from wave_sim2d.scene_objects.static_dampening import StaticDampening
 from wave_sim2d.scene_objects.static_refractive_index import StaticRefractiveIndex
 
@@ -21,6 +21,8 @@ class StaticImageScene(SceneObject):
             * Blue:  Absorbtion field. Larger values correspond to higher dampening of the waves,
                      use graduated transitions to avoid reflections
         """
+        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        
         # Set the opacity of source pixels to incoming waves. If the opacity is 0.0
         # the field will be completely overwritten by the source term
         # a nonzero value (e.g 0.5) allows for antialiasing of sources to work
@@ -40,22 +42,22 @@ class StaticImageScene(SceneObject):
 
         # set source frequency to channel value
         self.sources[:, 4] = scene_image[sources_pos[:, 1], sources_pos[:, 0], 1] / 255 * 0.5 * source_fequency_scale
-        self.sources = cp.array(self.sources).astype(cp.float32)
+        self.sources = torch.from_numpy(self.sources).to(torch.float32).to(self.device)
 
-    def render(self, field: cp.ndarray, wave_speed_field: cp.ndarray, dampening_field: cp.ndarray):
+    def render(self, field: torch.Tensor, wave_speed_field: torch.Tensor, dampening_field: torch.Tensor):
         """
         render the stat
         """
         self.dampening.render(field, wave_speed_field, dampening_field)
         self.refractive_index.render(field, wave_speed_field, dampening_field)
 
-    def update_field(self, field: cp.ndarray, t):
+    def update_field(self, field: torch.Tensor, t):
         # Update the sources in the simulation field based on their properties.
-        v = cp.sin(self.sources[:, 2]+self.sources[:, 4]*t)*self.sources[:, 3]
-        coords = self.sources[:, 0:2].astype(cp.int32)
+        v = torch.sin(self.sources[:, 2] + self.sources[:, 4] * t) * self.sources[:, 3]
+        coords = self.sources[:, 0:2].to(torch.int64)
 
         o = self.source_opacity
-        field[coords[:, 1], coords[:, 0]] = field[coords[:, 1], coords[:, 0]]*o + v*(1.0-o)
+        field[coords[:, 1], coords[:, 0]] = field[coords[:, 1], coords[:, 0]] * o + v * (1.0 - o)
 
     def render_visualization(self, image: np.ndarray):
         """ renders a visualization of the scene object to the image """

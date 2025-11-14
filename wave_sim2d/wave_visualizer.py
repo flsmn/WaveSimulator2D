@@ -1,5 +1,5 @@
 import numpy as np
-import cupy as cp
+import torch
 import cv2
 import matplotlib.pyplot
 
@@ -18,28 +18,31 @@ class WaveVisualizer:
         self.intensity_exp_average_factor = 0.98
         self.field = None
         self.visualization_image = None
+        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
 
     def update(self, wave_sim):
         self.field = wave_sim.get_field()
 
         if self.intensity is None:
-            self.intensity = cp.zeros_like(self.field)
+            self.intensity = torch.zeros_like(self.field)
 
         t = self.intensity_exp_average_factor
         self.intensity = self.intensity*t + (self.field**2)*(1.0-t)
         self.visualization_image = wave_sim.render_visualization()
 
     def render_intensity(self, brightness_scale=1.0, exp=0.5, overlay_visualization=True):
-        gray = (cp.clip((self.intensity**exp)*brightness_scale, 0.0, 1.0) * 254.0).astype(np.uint8)
-        img = self.intensity_colormap[gray].get() if self.intensity_colormap is not None else gray.get()
+        gray = (torch.clip(self.intensity**exp * brightness_scale, 0.0, 1.0) * 254.0).to(torch.uint8)
+        gray_np = gray.cpu().numpy()
+        img = self.intensity_colormap[gray_np] if self.intensity_colormap is not None else gray_np
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         if overlay_visualization:
             img = cv2.add(img, self.visualization_image)
         return img
 
     def render_field(self, brightness_scale=1.0, overlay_visualization=True):
-        gray = (cp.clip(self.field*brightness_scale, -1.0, 1.0) * 127 + 127).astype(np.uint8)
-        img = self.field_colormap[gray].get() if self.field_colormap is not None else gray.get()
+        gray = (torch.clip(self.field*brightness_scale, -1.0, 1.0) * 127 + 127).to(torch.uint8)
+        gray_np = gray.cpu().numpy()
+        img = self.field_colormap[gray_np] if self.field_colormap is not None else gray_np
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         if overlay_visualization:
             img = cv2.add(img, self.visualization_image)
@@ -49,7 +52,7 @@ class WaveVisualizer:
 def get_colormap_lut(name, invert, black_level=0.0, make_symmetric=False):
     if name == 'icefire': color_values = np.array(colormap_icefire)/255
     elif name == 'colormap_wave1': color_values = np.array(colormap_wave1)/255
-    elif name == 'colormap_wave2':color_values = np.array(colormap_wave2) / 255
+    elif name == 'colormap_wave2': color_values = np.array(colormap_wave2) / 255
     elif name == 'colormap_wave3': color_values = np.array(colormap_wave3) / 255
     elif name == 'colormap_wave4': color_values = np.array(colormap_wave4) / 255
     else:
@@ -66,4 +69,4 @@ def get_colormap_lut(name, invert, black_level=0.0, make_symmetric=False):
 
     color_values = np.clip(color_values*(1.0-black_level)+black_level, 0, 255)
 
-    return cp.asarray((color_values*255).astype(np.uint8))
+    return (color_values*255).astype(np.uint8)

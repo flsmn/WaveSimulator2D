@@ -1,5 +1,5 @@
 from wave_sim2d.wave_simulation import SceneObject
-import cupy as cp
+import torch
 import numpy as np
 import math
 
@@ -22,11 +22,12 @@ class PointSource(SceneObject):
         self.amplitude = amplitude
         self.phase = phase
         self.amplitude_modulator = amp_modulator
+        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
 
     def set_amplitude_modulator(self, func):
         self.amplitude_modulator = func
 
-    def render(self, field: cp.ndarray, wave_speed_field: cp.ndarray, dampening_field: cp.ndarray):
+    def render(self, field: torch.Tensor, wave_speed_field: torch.Tensor, dampening_field: torch.Tensor):
         pass
 
     def update_field(self, field, t):
@@ -35,7 +36,7 @@ class PointSource(SceneObject):
         else:
             amplitude = self.amplitude
 
-        v = cp.sin(self.phase + self.frequency * t) * amplitude
+        v = torch.sin(torch.tensor(self.phase + self.frequency * t, device=self.device)) * amplitude
         field[self.y, self.x] = v
 
     def render_visualization(self, image: np.ndarray):
@@ -62,11 +63,12 @@ class LineSource(SceneObject):
         self.amplitude = amplitude
         self.phase = phase
         self.amplitude_modulator = amp_modulator
+        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
 
     def set_amplitude_modulator(self, func):
         self.amplitude_modulator = func
 
-    def render(self, field: cp.ndarray, wave_speed_field: cp.ndarray, dampening_field: cp.ndarray):
+    def render(self, field: torch.Tensor, wave_speed_field: torch.Tensor, dampening_field: torch.Tensor):
         pass
 
     def update_field(self, field, t):
@@ -75,7 +77,7 @@ class LineSource(SceneObject):
         else:
             amplitude = self.amplitude
 
-        v = cp.sin(self.phase + self.frequency * t) * amplitude
+        v = torch.sin(torch.tensor(self.phase + self.frequency * t, device=self.device)) * amplitude
 
         # Determine the points along the line using NumPy
         x1, y1 = self.start
@@ -85,8 +87,8 @@ class LineSource(SceneObject):
         num_points = int(distance) + 1
 
         if num_points > 0:
-            x_coords = cp.linspace(x1, x2, num_points).round().astype(int)
-            y_coords = cp.linspace(y1, y2, num_points).round().astype(int)
+            x_coords = torch.linspace(x1, x2, num_points, device=self.device).round().to(torch.int64)
+            y_coords = torch.linspace(y1, y2, num_points, device=self.device).round().to(torch.int64)
 
             # Create boolean masks for valid indices
             valid_x = (x_coords >= 0) & (x_coords < field.shape[1])
