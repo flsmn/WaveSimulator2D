@@ -18,7 +18,12 @@ class WaveVisualizer:
         self.intensity_exp_average_factor = 0.98
         self.field = None
         self.visualization_image = None
-        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
 
     def update(self, wave_sim):
         self.field = wave_sim.get_field()

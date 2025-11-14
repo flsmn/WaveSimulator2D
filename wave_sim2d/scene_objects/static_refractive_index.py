@@ -17,7 +17,12 @@ class StaticRefractiveIndex(SceneObject):
                                        Note that values below 0.9 are clipped to prevent the simulation
                                        from becoming instable
         """
-        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
         shape = refractive_index_field.shape
         self.c = torch.ones((shape[0], shape[1]), dtype=torch.float32, device=self.device)
         

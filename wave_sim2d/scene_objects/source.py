@@ -22,7 +22,12 @@ class PointSource(SceneObject):
         self.amplitude = amplitude
         self.phase = phase
         self.amplitude_modulator = amp_modulator
-        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
 
     def set_amplitude_modulator(self, func):
         self.amplitude_modulator = func
@@ -63,7 +68,12 @@ class LineSource(SceneObject):
         self.amplitude = amplitude
         self.phase = phase
         self.amplitude_modulator = amp_modulator
-        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
 
     def set_amplitude_modulator(self, func):
         self.amplitude_modulator = func

@@ -4,10 +4,12 @@ import numpy as np
 from abc import ABC, abstractmethod
 
 
-# Device management: prefer MPS on Apple Silicon, fall back to CPU
+# Device management: CUDA → MPS → CPU priority
 def _get_device():
     """Get the appropriate device for tensor operations."""
-    if torch.backends.mps.is_available():
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    elif torch.backends.mps.is_available():
         return torch.device("mps")
     else:
         return torch.device("cpu")

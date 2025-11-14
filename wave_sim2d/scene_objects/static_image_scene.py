@@ -21,7 +21,12 @@ class StaticImageScene(SceneObject):
             * Blue:  Absorbtion field. Larger values correspond to higher dampening of the waves,
                      use graduated transitions to avoid reflections
         """
-        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
         
         # Set the opacity of source pixels to incoming waves. If the opacity is 0.0
         # the field will be completely overwritten by the source term

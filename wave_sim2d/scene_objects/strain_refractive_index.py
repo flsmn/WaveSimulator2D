@@ -14,7 +14,12 @@ class StrainRefractiveIndex(SceneObject):
         Creates a strain refractive index field object
         :param coupling_constant: coupling constant between the strain and the refractive index
         """
-        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps")
+        else:
+            self.device = torch.device("cpu")
         self.coupling_constant = coupling_constant
         self.refractive_index_offset = refractive_index_offset
 
