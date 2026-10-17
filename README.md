@@ -1,6 +1,6 @@
 # WaveSimulator2D — current development API
 
-The installable engine for Wave Studio is `wave-simulator-2d==0.1.0.dev1` (Python 3.12). The supported Studio path is `prepare_scene()` → `WaveSimulator2D.from_scene()` → `step(count)` / `snapshot()` / `reset()`.
+The installable engine for Wave Studio is `wave-simulator-2d==0.1.0.dev2` (Python 3.12). The supported Studio path is `prepare_scene()` → `WaveSimulator2D.from_scene()` → `step(count)` / `snapshot()` / `reset()`.
 
 ```sh
 python -m pip install -e ".[dev]"

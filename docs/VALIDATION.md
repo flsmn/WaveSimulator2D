@@ -1,12 +1,12 @@
 # Numerical validation – 17 October 2026
 
-Engine 0.1.0.dev1; CPU float32, one Torch CPU thread, Python 3.12.12, Torch 2.5.1, macOS arm64. Raw measurements are in `physical-results.json`; the initial failed border configuration is retained in `physical-results-initial.json`. Thresholds were frozen in commit `d06d04b` before measurements. Invoke `python validation/run_references.py` from the engine repository with its installed environment. A failed/pending reference exits nonzero.
+Engine 0.1.0.dev2; CPU float32, one Torch CPU thread, Python 3.12.12, Torch 2.5.1, macOS arm64. Raw measurements are in `physical-results.json`; the initial failed border configuration is retained in `physical-results-initial.json`. Thresholds were frozen in commit `d06d04b` before measurements. Invoke `python validation/run_references.py` from the engine repository with its installed environment. A failed/pending reference exits nonzero.
 
 | Reference | Measured | Frozen limit | Status |
 | --- | --- | --- | --- |
 | T01 axial/diagonal speed, two grids | 0.079–0.405% relative error | 2% | passed |
 | T01 driven wavelength | 0.606–0.861% error | 5% | passed |
-| T01 point-source strength across grids | 0.448% difference | 15% | passed |
+| T01 point-/line-source strength across grids | 0.448% / 2.880% difference | 15% | passed |
 | T01 coherent sources / return wave | additive doubling, antiphase cancellation, incident-field superposition | absolute field tolerance 2e-6 in core checks | passed |
 | T02 refraction | 15.718° vs 16.364° Snell reference; incident 25.623° vs 25° | 3° | passed |
 | T02 physical damping rate, two grids | 0.20000027 / 0.20000077 vs 0.2 | 5% | passed |
@@ -16,7 +16,7 @@ Engine 0.1.0.dev1; CPU float32, one Torch CPU thread, Python 3.12.12, Torch 2.5.
 | T04 back focal distance | 19.180 / 20.827 vs paraxial 23.534 | 20% | passed for this coarse demonstration |
 | T04 refinement / focus gain | 7% focus shift; 13.32× / 10.39× intensity gain | ≤10% shift; ≥1.5× gain | passed |
 
-Seven core tests cover parameter errors, reset reproducibility, finite initial fields, explicit CPU, material overlap, moved geometry, wall transmission, coherent sources, incoming-wave transparency and spatial source normalization. The historical comprehensive script passes all nine groups; these are compatibility checks, not additional physics acceptance.
+Nine core tests cover parameter errors, reset reproducibility, finite initial fields, explicit CPU, material overlap, moved geometry, wall transmission, coherent sources, incoming-wave transparency and spatial source normalization. The historical comprehensive script passes all nine groups; these are compatibility checks, not additional physics acceptance.
 
 ## Investigated deviations and limits
 
@@ -25,3 +25,5 @@ The first T02 line endpoint lay within the damped border and was correctly rejec
 T04 intentionally tests a scalar 2D lens against a paraxial thick-lens estimate. The coarse dx=.10/.08 grids resolve the shortest wavelength in the lens with only 5.3/6.7 cells. The measured 18.5%/11.5% focus errors pass the frozen broad 20% demonstration threshold, but do not support a precision optics or final quality claim. The warning below twelve cells per material wavelength remains active. The 7% refinement shift is a known limitation, not evidence of convergence to arbitrary accuracy. No more accurate lens preset is released from this result.
 
 The full reference report covers only these static scalar scenes, finite line illumination and the documented sampling windows. CPU/MPS and native-platform checks belong to T08/T09 separately. No CUDA support is offered in Studio.
+
+The four references were rerun after E08 with version 0.1.0.dev2. Passive reductions leave the numerical wave field unchanged; all frozen thresholds still pass. The additional line-source measurement uses fixed arc-length forcing and the same physical observation point across both grids.

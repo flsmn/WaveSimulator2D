@@ -1,5 +1,5 @@
 {
-  "engine": "0.1.0.dev1",
+  "engine": "0.1.0.dev2",
   "platform": "macOS-27.0.1-arm64-arm-64bit",
   "python": "3.12.12",
   "torch": "2.5.1",
@@ -39,8 +39,8 @@
             8,
             1
           ],
-          "speed": 0.9968310496721586,
-          "relative_error": 0.003168950327841369
+          "speed": 0.9968310496721676,
+          "relative_error": 0.003168950327832376
         },
         {
           "dx": 0.25,
@@ -48,8 +48,8 @@
             6,
             6
           ],
-          "speed": 0.9959476515896976,
-          "relative_error": 0.004052348410302442
+          "speed": 0.9959476515896856,
+          "relative_error": 0.0040523484103144325
         },
         {
           "dx": 0.125,
@@ -57,8 +57,8 @@
             8,
             1
           ],
-          "speed": 0.9992085607354467,
-          "relative_error": 0.0007914392645532731
+          "speed": 0.9992085607354998,
+          "relative_error": 0.0007914392645002044
         },
         {
           "dx": 0.125,
@@ -66,8 +66,8 @@
             6,
             6
           ],
-          "speed": 0.9989862953507772,
-          "relative_error": 0.0010137046492227908
+          "speed": 0.9989862953506972,
+          "relative_error": 0.0010137046493028379
         }
       ],
       "point_source": [
@@ -79,14 +79,25 @@
         },
         {
           "dx": 0.125,
-          "wavelength": 4.034430332227159,
-          "relative_error": 0.00860758305678977,
+          "wavelength": 4.034430332227157,
+          "relative_error": 0.008607583056789325,
           "amplitude_at_x22": 0.06233276717870611
         }
       ],
       "resolution_amplitude_relative_error": 0.004483728369425344,
+      "line_source": [
+        {
+          "dx": 0.25,
+          "amplitude": 0.2731197271091449
+        },
+        {
+          "dx": 0.125,
+          "amplitude": 0.2812181483425488
+        }
+      ],
+      "line_resolution_amplitude_relative_error": 0.02879764795101103,
       "additive_phase_incoming_wave": "see tests/test_core.py",
-      "elapsed_seconds": 0.40067508298670873
+      "elapsed_seconds": 0.8133250419632532
     },
     "T02": {
       "passed": true,
@@ -97,13 +108,13 @@
       "damping": [
         {
           "dx": 0.25,
-          "measured_gamma": 0.20000027432297043,
-          "relative_error": 1.371614852141434e-06
+          "measured_gamma": 0.2000002743229768,
+          "relative_error": 1.3716148838938125e-06
         },
         {
           "dx": 0.125,
-          "measured_gamma": 0.2000007665917893,
-          "relative_error": 3.832958946459186e-06
+          "measured_gamma": 0.20000076659179292,
+          "relative_error": 3.832958964444799e-06
         }
       ],
       "border_reflection": [
@@ -116,7 +127,7 @@
           "relative_return_amplitude": 0.009040631212166687
         }
       ],
-      "elapsed_seconds": 2.823133375030011
+      "elapsed_seconds": 2.9637785829836503
     },
     "T03": {
       "passed": true,
@@ -138,7 +149,7 @@
           "wall_max": 0.0
         }
       ],
-      "elapsed_seconds": 2.2215475830016658
+      "elapsed_seconds": 2.2032806660281494
     },
     "T04": {
       "passed": true,
@@ -164,11 +175,7 @@
           "focus_gain": 10.386316482407022
         }
       ],
-      "elapsed_seconds": 28.2056416249834
+      "elapsed_seconds": 27.327794041018933
     }
-  },
-  "notes": [
-    "T02 initial 6-unit border failed on coarse grid (8.56% return vs 8% tolerance). Corrected source outside border, then used an 8-unit damped border with source/probe translated into its usable interior. Thresholds unchanged; initial report retained.",
-    "T04 uses intentionally coarse grids and allows 20% focus error; it is a limited scalar-model demonstration, not a precision lens validation."
-  ]
+  }
 }

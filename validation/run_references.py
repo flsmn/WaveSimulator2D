@@ -70,8 +70,15 @@ def t01():
         wavelength=2*np.pi/abs(slope)
         sources.append({'dx':dx,'wavelength':float(wavelength),'relative_error':abs(wavelength/4-1),'amplitude_at_x22':float(abs(z[26]))})
     amp_error=abs(sources[0]['amplitude_at_x22']/sources[1]['amplitude_at_x22']-1)
-    ok=all(m['relative_error']<=LIMITS['T01']['speed_relative_error'] for m in modes) and all(s['relative_error']<=LIMITS['T01']['source_wavelength_relative_error'] for s in sources) and amp_error<=LIMITS['T01']['source_resolution_amplitude_relative_error']
-    return {'passed':ok,'sine_modes':modes,'point_source':sources,'resolution_amplitude_relative_error':amp_error,'additive_phase_incoming_wave':'see tests/test_core.py'}
+    lines=[]
+    for dx in (.25,.125):
+        g=grid(32,32,dx)
+        scene=prepare_scene(g,sources=[Source((10,6),(10,26),wavelength=4)])
+        z,_=demodulate(scene,24,16,lambda u:sample(u,g,18.,16.))
+        lines.append({'dx':dx,'amplitude':float(abs(z))})
+    line_error=abs(lines[0]['amplitude']/lines[1]['amplitude']-1)
+    ok=all(m['relative_error']<=LIMITS['T01']['speed_relative_error'] for m in modes) and all(s['relative_error']<=LIMITS['T01']['source_wavelength_relative_error'] for s in sources) and max(amp_error,line_error)<=LIMITS['T01']['source_resolution_amplitude_relative_error']
+    return {'passed':ok,'sine_modes':modes,'point_source':sources,'resolution_amplitude_relative_error':amp_error,'line_source':lines,'line_resolution_amplitude_relative_error':line_error,'additive_phase_incoming_wave':'see tests/test_core.py'}
 
 
 def t02():

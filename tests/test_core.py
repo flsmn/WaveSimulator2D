@@ -48,6 +48,9 @@ def test_steps_snapshot_and_complete_reset():
     fresh.step(37)
     np.testing.assert_array_equal(first, fresh.snapshot())
     with pytest.raises(ConfigurationError): sim.step(0)
+    from wave_sim2d.config import NumericalError
+    sim.u.fill_(float('nan'))
+    with pytest.raises(NumericalError):sim.step()
 
 
 def test_material_order_and_fresh_raster():
