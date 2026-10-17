@@ -35,3 +35,7 @@ The full-field intensity view is a bounded exponential live preview (physical ti
 `dispersion.py` exposes the calibrated nine-point Fourier symbol, its centred-time eigenfrequency and a driven-wave phase-drift estimate sampled at nine directions from axial to diagonal. The estimate assumes a homogeneous medium at the supplied index; it cannot bound interface staircasing, arbitrary concave necks, edge diffraction or finite-domain reflections. Studio combines this estimate with wavelength, geometry and resource guards. Measured eigenmodes at two directions, two spacings and indices 1/1.5 agree within 0.1% and remain within the original 2% speed limit (`tests/test_dispersion.py`).
 
 Polygon rasterization now evaluates only its padded bounding box. The coordinates, cell-centre inclusion rule and resulting mask remain identical to the previous full-domain implementation; regression cases include rotated thin, concave and lens polygons. This makes high-resolution lens compilation practical without changing the continuous contour or the numerical solver.
+
+### Explicit grid axis budget (dev4)
+
+`Grid(..., max_axis_cells=4096)` preserves the previous default while permitting a caller-selected axis admission budget. `WaveSimulator2D.from_scene` propagates it into solver construction; the legacy constructor also accepts this keyword. This metadata does not change the numerical method. The desktop application separately enforces its configured numerical-buffer budget before raster allocation.

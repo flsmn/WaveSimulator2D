@@ -54,8 +54,8 @@ class WaveSimulator2D:
     Arrays use [y, x], cell centres are ((x+.5)*dx, (y+.5)*dx).
     get_field() is a legacy borrowed tensor; snapshot() returns an owned CPU copy.
     """
-    def __init__(self, w, h, scene_objects=None, initial_field=None, *, device="auto", dx=1.0, dt=None):
-        self.grid = Grid(w, h, dx, dt if dt is not None else 0.5*dx, 0, 0)
+    def __init__(self, w, h, scene_objects=None, initial_field=None, *, device="auto", dx=1.0, dt=None, max_axis_cells=4096):
+        self.grid = Grid(w, h, dx, dt if dt is not None else 0.5*dx, 0, 0,max_axis_cells)
         self.device = resolve_device(device)
         self.dt, self.dx = self.grid.dt, self.grid.dx
         self.global_dampening = 1.0
@@ -82,7 +82,7 @@ class WaveSimulator2D:
     @classmethod
     def from_scene(cls, scene, *, device="auto", initial_field=None):
         grid = scene.grid
-        sim = cls(grid.nx, grid.ny, initial_field=initial_field, device=device, dx=grid.dx, dt=grid.dt)
+        sim = cls(grid.nx, grid.ny, initial_field=initial_field, device=device, dx=grid.dx, dt=grid.dt,max_axis_cells=grid.max_axis_cells)
         sim.grid = grid
         sim.c.copy_(torch.tensor(scene.refractive_index.copy(), device=sim.device).reciprocal())
         sim.gamma.copy_(torch.tensor((scene.material_damping+scene.border_damping).copy(), device=sim.device))

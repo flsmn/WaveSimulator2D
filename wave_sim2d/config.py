@@ -36,12 +36,15 @@ class Grid:
     dt: float = 0.0625
     border_width: float = 3.0
     border_rate: float = 2.0
+    max_axis_cells: int = 4096
 
     def __post_init__(self):
+        if type(self.max_axis_cells) is not int or self.max_axis_cells < 8:
+            raise ConfigurationError("Axis budget must be an integer of at least 8 cells.")
         for name in ("nx", "ny"):
             value = getattr(self, name)
-            if type(value) is not int or not 8 <= value <= 4096:
-                raise ConfigurationError(f"{name} must be an integer between 8 and 4096.")
+            if type(value) is not int or not 8 <= value <= self.max_axis_cells:
+                raise ConfigurationError(f"{name} must be an integer between 8 and the configured axis budget ({self.max_axis_cells}).")
         finite(self.dx, "Grid spacing", positive=True)
         finite(self.dt, "Time step", positive=True)
         finite(self.border_width, "Border width", minimum=0)
