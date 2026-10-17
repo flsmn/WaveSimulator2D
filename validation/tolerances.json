@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "frozen_before_first_run": "2026-10-17",
+  "T01": {"speed_relative_error": 0.02, "source_wavelength_relative_error": 0.05, "source_resolution_amplitude_relative_error": 0.15},
+  "T02": {"angle_error_degrees": 3.0, "border_reflected_amplitude_ratio": 0.08, "decay_rate_relative_error": 0.05},
+  "T03": {"wall_field_max": 1e-7, "symmetry_relative_error": 0.03, "first_minimum_position_relative_error": 0.15},
+  "T04": {"focus_position_relative_error": 0.20, "grid_focus_shift_relative_error": 0.10, "minimum_focus_gain": 1.5}
+}
