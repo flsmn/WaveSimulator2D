@@ -1,3 +1,20 @@
+# WaveSimulator2D — current development API
+
+The installable engine for Wave Studio is `wave-simulator-2d==0.1.0.dev1` (Python 3.12). The supported Studio path is `prepare_scene()` → `WaveSimulator2D.from_scene()` → `step(count)` / `snapshot()` / `reset()`.
+
+```sh
+python -m pip install -e ".[dev]"
+python -m pytest -q
+python -m build --wheel
+python validation/run_references.py
+```
+
+CPU is explicitly selectable. MPS requires a real-device comparison. OpenCV/Matplotlib are optional: install `.[examples]` for historical example scripts; do not install both OpenCV distributions into one Qt environment. Core imports require only NumPy and Torch.
+
+See [numerical model and compatibility changes](docs/MODEL.md), [physical validation report](docs/VALIDATION.md), and [frozen reference protocol](validation/README.md). The calibrated stencil, source meaning and time step differ from historical examples. The accuracy/performance claims in the historical README below are not current product guarantees.
+
+---
+
 # 2D Wave Simulation on the GPU
 
 This repository contains a lightweight 2D wave simulator running on the GPU using **PyTorch** with **Metal Performance Shaders (MPS)** backend for Apple Silicon acceleration. It can be used for 2D light and sound simulations.
@@ -41,7 +58,7 @@ See [PYTORCH_MIGRATION.md](PYTORCH_MIGRATION.md) for comprehensive migration det
 * Refactored the code to support a more flexible scene description. A simulation scene now consists of a list of objects that add their contribution to the fields.
 They can be combined to build complex and time dependent simulations. The refactoring also made the core simulation code even simpler.
 * Added a few new custom colormaps that work well for wave simulations.
-* Added new examples, which should make it easier to understand the usage of the program and how you can setup your own simulations: [examples](source/examples).
+* Added new examples, which should make it easier to understand the usage of the program and how you can setup your own simulations: [examples](wave_sim2d/examples).
 
 <div style="display: flex;">
     <img src="images/simulation_3.jpg" alt="Example Image 3" width="45%">

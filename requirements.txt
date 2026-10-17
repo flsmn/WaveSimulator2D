@@ -1,4 +1,3 @@
-numpy
-opencv-python
-matplotlib
-torch
+# Core; the old OpenCV visualizer is available through .[examples].
+numpy>=1.26,<3
+torch>=2.5,<3

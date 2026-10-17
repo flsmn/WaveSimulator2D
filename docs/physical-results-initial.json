@@ -1,0 +1,170 @@
+{
+  "engine": "0.1.0.dev1",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.12",
+  "torch": "2.5.1",
+  "backend": "cpu",
+  "dtype": "float32",
+  "tolerances": {
+    "version": 1,
+    "frozen_before_first_run": "2026-10-17",
+    "T01": {
+      "speed_relative_error": 0.02,
+      "source_wavelength_relative_error": 0.05,
+      "source_resolution_amplitude_relative_error": 0.15
+    },
+    "T02": {
+      "angle_error_degrees": 3.0,
+      "border_reflected_amplitude_ratio": 0.08,
+      "decay_rate_relative_error": 0.05
+    },
+    "T03": {
+      "wall_field_max": 1e-07,
+      "symmetry_relative_error": 0.03,
+      "first_minimum_position_relative_error": 0.15
+    },
+    "T04": {
+      "focus_position_relative_error": 0.2,
+      "grid_focus_shift_relative_error": 0.1,
+      "minimum_focus_gain": 1.5
+    }
+  },
+  "results": {
+    "T01": {
+      "passed": true,
+      "sine_modes": [
+        {
+          "dx": 0.25,
+          "mode": [
+            8,
+            1
+          ],
+          "speed": 0.9968310496721586,
+          "relative_error": 0.003168950327841369
+        },
+        {
+          "dx": 0.25,
+          "mode": [
+            6,
+            6
+          ],
+          "speed": 0.9959476515896976,
+          "relative_error": 0.004052348410302442
+        },
+        {
+          "dx": 0.125,
+          "mode": [
+            8,
+            1
+          ],
+          "speed": 0.9992085607354467,
+          "relative_error": 0.0007914392645532731
+        },
+        {
+          "dx": 0.125,
+          "mode": [
+            6,
+            6
+          ],
+          "speed": 0.9989862953507772,
+          "relative_error": 0.0010137046492227908
+        }
+      ],
+      "point_source": [
+        {
+          "dx": 0.25,
+          "wavelength": 4.024246850362308,
+          "relative_error": 0.006061712590577084,
+          "amplitude_at_x22": 0.06205328398216216
+        },
+        {
+          "dx": 0.125,
+          "wavelength": 4.034430332227159,
+          "relative_error": 0.00860758305678977,
+          "amplitude_at_x22": 0.06233276717870611
+        }
+      ],
+      "resolution_amplitude_relative_error": 0.004483728369425344,
+      "additive_phase_incoming_wave": "see tests/test_core.py",
+      "elapsed_seconds": 0.40067508298670873
+    },
+    "T02": {
+      "passed": false,
+      "incidence_degrees": 25.622868692642722,
+      "transmission_degrees": 15.718441934901723,
+      "snell_reference_degrees": 16.36440972864499,
+      "angle_error_degrees": 0.6459677937432673,
+      "damping": [
+        {
+          "dx": 0.25,
+          "measured_gamma": 0.20000027432297043,
+          "relative_error": 1.371614852141434e-06
+        },
+        {
+          "dx": 0.125,
+          "measured_gamma": 0.2000007665917893,
+          "relative_error": 3.832958946459186e-06
+        }
+      ],
+      "border_reflection": [
+        {
+          "dx": 0.25,
+          "relative_return_amplitude": 0.0856072594977319
+        },
+        {
+          "dx": 0.125,
+          "relative_return_amplitude": 0.0690432785443666
+        }
+      ],
+      "elapsed_seconds": 2.244185917021241
+    },
+    "T03": {
+      "passed": true,
+      "measurements": [
+        {
+          "dx": 0.25,
+          "first_minimum_offset": 3.5,
+          "reference_offset": 3.752254,
+          "relative_error": 0.06722732522904906,
+          "symmetry_error": 1.7131078043242492e-07,
+          "wall_max": 0.0
+        },
+        {
+          "dx": 0.125,
+          "first_minimum_offset": 3.625,
+          "reference_offset": 3.752254,
+          "relative_error": 0.03391401541580075,
+          "symmetry_error": 2.11883293637415e-07,
+          "wall_max": 0.0
+        }
+      ],
+      "elapsed_seconds": 2.2215475830016658
+    },
+    "T04": {
+      "passed": true,
+      "radius": 24.0,
+      "aperture": 16.0,
+      "index": 1.5,
+      "thickness": 2.7451660040609553,
+      "paraxial_back_focal_distance": 23.533580676613465,
+      "grid_shift_relative_error": 0.06999999999999995,
+      "measurements": [
+        {
+          "dx": 0.1,
+          "focus_x": 50.55245125347045,
+          "back_focal_distance": 19.179868251439974,
+          "relative_error": 0.18499999999999994,
+          "focus_gain": 13.32492354634705
+        },
+        {
+          "dx": 0.08,
+          "focus_x": 52.19980190083339,
+          "back_focal_distance": 20.827218898802915,
+          "relative_error": 0.1150000000000001,
+          "focus_gain": 10.386316482407022
+        }
+      ],
+      "elapsed_seconds": 28.2056416249834
+    }
+  }
+}

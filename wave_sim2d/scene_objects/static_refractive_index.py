@@ -17,12 +17,7 @@ class StaticRefractiveIndex(SceneObject):
                                        Note that values below 0.9 are clipped to prevent the simulation
                                        from becoming instable
         """
-        if torch.cuda.is_available():
-            self.device = torch.device("cuda")
-        elif torch.backends.mps.is_available():
-            self.device = torch.device("mps")
-        else:
-            self.device = torch.device("cpu")
+        self.device = torch.device("cpu")  # simulator.bind owns device selection
         shape = refractive_index_field.shape
         self.c = torch.ones((shape[0], shape[1]), dtype=torch.float32, device=self.device)
         
@@ -59,7 +54,7 @@ class StaticRefractiveIndexPolygon(SceneObject):
             vertices (list or np.ndarray): A list or array of (x, y) coordinates defining the polygon.
             refractive_index (float): The refractive index of the polygon. Values are clamped to [0.9, 10.0].
         """
-        self.device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+        self.device = torch.device("cpu")
         self.vertices = np.array(vertices, dtype=np.float32)
         self.refractive_index = min(max(refractive_index, 0.9), 10.0)
         self._cached_coords = None

@@ -1,129 +1,162 @@
+"""One scalar wave solver; prepared scenes are the supported Studio API.
+
+The old scene-object interface remains for historical examples only. See docs/MODEL.md.
+"""
+from abc import ABC, abstractmethod
+import math
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-from abc import ABC, abstractmethod
+from .config import BackendError, ConfigurationError, NumericalError, Grid, KERNEL_SCALE
 
 
-# Device management: CUDA → MPS → CPU priority
-def _get_device():
-    """Get the appropriate device for tensor operations."""
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    elif torch.backends.mps.is_available():
-        return torch.device("mps")
-    else:
-        return torch.device("cpu")
+def resolve_device(requested="auto"):
+    if requested == "auto":
+        requested = "mps" if torch.backends.mps.is_available() else "cpu"
+    if requested not in ("cpu", "mps", "cuda"):
+        raise ConfigurationError("Device must be auto, cpu, mps or cuda.")
+    if requested == "mps" and not torch.backends.mps.is_available():
+        raise BackendError("The requested MPS device is unavailable.")
+    if requested == "cuda" and not torch.cuda.is_available():
+        raise BackendError("The requested CUDA device is unavailable.")
+    return torch.device(requested)
+
+
+_get_device = resolve_device
 
 
 class SceneObject(ABC):
-    """
-    Interface for simulation scene objects. A scene object is anything defining or modifying the simulation scene.
-    For example: Light sources, Absorbers or regions with specific refractive index. Scene objects can change the
-    simulated field and draw their contribution to the wave speed field and dampening field each frame """
+    """Legacy example interface. Studio uses immutable prepared scenes."""
+    def bind(self, device, dt, dx):
+        self.device = device
+        self.dt, self.dx = dt, dx
+        for name, value in vars(self).copy().items():
+            if isinstance(value, torch.Tensor):
+                setattr(self, name, value.to(device))
+            elif isinstance(value, SceneObject):
+                value.bind(device, dt, dx)
+        # Rebuild legacy polygon caches on the requested device.
+        if hasattr(self, "_cached_coords"):
+            self._cached_coords = None
 
     @abstractmethod
-    def render(self, field: torch.Tensor, wave_speed_field: torch.Tensor, dampening_field: torch.Tensor):
-        """ renders the scene objects contribution to the wave speed field and dampening field """
-        pass
-
+    def render(self, field, wave_speed_field, dampening_field): ...
     @abstractmethod
-    def update_field(self, field: torch.Tensor, t):
-        """ performs updates to the field itself, e.g. for adding sources """
-        pass
-
+    def update_field(self, field, t): ...
     @abstractmethod
-    def render_visualization(self, image: np.ndarray):
-        """ renders a visualization of the scene object to the image """
-        pass
+    def render_visualization(self, image): ...
 
 
 class WaveSimulator2D:
+    """Calibrated nine-point scalar FDTD solver with float32 state.
+
+    Arrays use [y, x], cell centres are ((x+.5)*dx, (y+.5)*dx).
+    get_field() is a legacy borrowed tensor; snapshot() returns an owned CPU copy.
     """
-    Simulates the 2D wave equation
-    The system assumes units, where the wave speed is 1.0 pixel/timestep
-    source frequency should be adjusted accordingly
-    """
-    def __init__(self, w, h, scene_objects, initial_field=None):
-        """
-        Initialize the 2D wave simulator.
-        @param w: Width of the simulation grid.
-        @param h: Height of the simulation grid.
-        """
-        self.device = _get_device()
+    def __init__(self, w, h, scene_objects=None, initial_field=None, *, device="auto", dx=1.0, dt=None):
+        self.grid = Grid(w, h, dx, dt if dt is not None else 0.5*dx, 0, 0)
+        self.device = resolve_device(device)
+        self.dt, self.dx = self.grid.dt, self.grid.dx
         self.global_dampening = 1.0
-        self.c = torch.ones((h, w), dtype=torch.float32, device=self.device)                      # wave speed field (from refractive indices)
-        self.d = torch.ones((h, w), dtype=torch.float32, device=self.device)                      # dampening field
-        self.u = torch.zeros((h, w), dtype=torch.float32, device=self.device)                     # field values
-        self.u_prev = torch.zeros((h, w), dtype=torch.float32, device=self.device)                # field values of prev frame
+        self.c = torch.ones(self.grid.shape, dtype=torch.float32, device=self.device)
+        self.d = torch.ones_like(self.c)
+        self.gamma = torch.zeros_like(self.c)
+        self.walls = torch.zeros(self.grid.shape, dtype=torch.bool, device=self.device)
+        self.walls[0, :] = self.walls[-1, :] = True
+        self.walls[:, 0] = self.walls[:, -1] = True
+        self.u = torch.zeros_like(self.c)
+        self.u_prev = torch.zeros_like(self.c)
+        self._initial = self._validate_initial(initial_field)
+        self.laplacian_kernel = torch.tensor([[.066,.184,.066],[.184,-1,.184],[.066,.184,.066]], dtype=torch.float32, device=self.device)[None,None] / KERNEL_SCALE
+        self.scene_objects = list(scene_objects or ())
+        for obj in self.scene_objects:
+            obj.bind(self.device, self.dt, self.dx)
+        self._sources = []
+        self._prepared = False
+        self.steps = 0
+        self.t = 0.0
+        self.reset()
 
-        if initial_field is not None:
-            assert w == initial_field.shape[1] and h == initial_field.shape[2], 'width/height of initial field invalid'
-            self.u[:] = torch.from_numpy(initial_field).to(self.device)
-            self.u_prev[:] = torch.from_numpy(initial_field).to(self.device)
+    @classmethod
+    def from_scene(cls, scene, *, device="auto", initial_field=None):
+        grid = scene.grid
+        sim = cls(grid.nx, grid.ny, initial_field=initial_field, device=device, dx=grid.dx, dt=grid.dt)
+        sim.grid = grid
+        sim.c.copy_(torch.tensor(scene.refractive_index.copy(), device=sim.device).reciprocal())
+        sim.gamma.copy_(torch.tensor((scene.material_damping+scene.border_damping).copy(), device=sim.device))
+        sim.walls |= torch.tensor(scene.walls.copy(), device=sim.device)
+        sim._sources = [(torch.tensor(s.indices.copy(), device=sim.device), torch.tensor(s.weights.copy(), device=sim.device), s.omega, s.amplitude, s.phase) for s in scene.sources]
+        sim._prepared = True
+        sim.reset()
+        return sim
 
-        # Define Laplacian kernel as a 2D convolution kernel
-        # Shape: (1, 1, 3, 3) for 2D convolution with PyTorch
-        laplacian_weights = [[0.066, 0.184, 0.066],
-                            [0.184, -1.0, 0.184],
-                            [0.066, 0.184, 0.066]]
-        self.laplacian_kernel = torch.tensor(laplacian_weights, dtype=torch.float32, device=self.device)
-        self.laplacian_kernel = self.laplacian_kernel.unsqueeze(0).unsqueeze(0)  # Shape: (1, 1, 3, 3)
+    def _validate_initial(self, field):
+        if field is None:
+            return torch.zeros_like(self.u)
+        value = torch.as_tensor(field, dtype=torch.float32, device=self.device).clone()
+        if tuple(value.shape) != self.grid.shape or not torch.isfinite(value).all().item():
+            raise ConfigurationError(f"Initial field must be finite with shape {self.grid.shape} ([y, x]).")
+        return value
 
-        self.t = 0
-        self.dt = 1.0
-
-        self.scene_objects = scene_objects if scene_objects is not None else []
-
-    def reset_time(self):
-        """
-        Reset the simulation time to zero.
-        """
+    def reset(self):
+        """Restore the initial displacement and zero initial velocity, time and count."""
+        self.u.copy_(self._initial)
+        self.u.masked_fill_(self.walls, 0)
+        self.u_prev.copy_(self.u)
+        self.steps = 0
         self.t = 0.0
 
-    def update_field(self):
-        """
-        Update the simulation field based on the wave equation.
-        """
-        # Calculate laplacian using convolution
-        # Pad the field to maintain 'same' mode behavior
-        u_padded = F.pad(self.u.unsqueeze(0).unsqueeze(0), (1, 1, 1, 1), mode='constant', value=0.0)
-        laplacian = F.conv2d(u_padded, self.laplacian_kernel, padding=0).squeeze(0).squeeze(0)
-
-        # Update field
-        v = (self.u - self.u_prev) * self.d * self.global_dampening
-        r = (self.u + v + laplacian * (self.c * self.dt)**2)
-
-        self.u_prev[:] = self.u.clone()
-        self.u[:] = r
-
-        self.t += self.dt
+    def reset_time(self):
+        """Deprecated compatibility name: now performs a complete reset."""
+        self.reset()
 
     def update_scene(self):
-        # clear wave speed field and dampening field
-        self.c.fill_(1.0)
-        self.d.fill_(1.0)
-
+        if self._prepared:
+            return
+        self.c.fill_(1)
+        self.d.fill_(1)
         for obj in self.scene_objects:
             obj.render(self.u, self.c, self.d)
-
         for obj in self.scene_objects:
             obj.update_field(self.u, self.t)
+        self.u.masked_fill_(self.walls, 0)
+
+    @torch.no_grad()
+    def update_field(self):
+        lap = F.conv2d(self.u[None,None], self.laplacian_kernel, padding=1)[0,0] / self.dx**2
+        half_damping = self.gamma * (self.dt/2)
+        nxt = (2*self.u - (1-half_damping)*self.u_prev + (self.c*self.dt)**2*lap) / (1+half_damping)
+        if not self._prepared:
+            # Legacy per-step damping conversion; not part of the calibrated material API.
+            nxt += ((self.d*self.global_dampening)-1)*(self.u-self.u_prev)
+        for indices, weights, omega, amplitude, phase in self._sources:
+            force = amplitude*math.sin(omega*self.t+phase)*self.dt**2
+            nxt.view(-1).index_add_(0, indices, weights*force/(1+half_damping.view(-1)[indices]))
+        nxt.masked_fill_(self.walls, 0)
+        self.u_prev, self.u = self.u, nxt
+        self.steps += 1
+        self.t = self.steps*self.dt
+
+    def step(self, count=1):
+        if type(count) is not int or count < 1 or count > 10000:
+            raise ConfigurationError("Step count must be an integer between 1 and 10000.")
+        for _ in range(count):
+            self.update_scene()
+            self.update_field()
+        if not torch.isfinite(self.u).all().item():
+            raise NumericalError("The wave field contains non-finite values. Reset or change the configuration.")
+
+    def snapshot(self):
+        result = self.u.detach().cpu().numpy().copy()
+        result.setflags(write=False)
+        return result
 
     def get_field(self):
-        """
-        Get the current state of the simulation field.
-        @return: A 2D tensor representing the simulation field.
-        """
         return self.u
 
     def render_visualization(self, image=None):
-        # clear wave speed field and dampening field
         if image is None:
-            image = np.zeros((self.c.shape[0], self.c.shape[1], 3), dtype=np.uint8)
-
+            image = np.zeros((*self.grid.shape,3), dtype=np.uint8)
         for obj in self.scene_objects:
             obj.render_visualization(image)
-
         return image
-
-

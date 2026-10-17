@@ -22,12 +22,7 @@ class PointSource(SceneObject):
         self.amplitude = amplitude
         self.phase = phase
         self.amplitude_modulator = amp_modulator
-        if torch.cuda.is_available():
-            self.device = torch.device("cuda")
-        elif torch.backends.mps.is_available():
-            self.device = torch.device("mps")
-        else:
-            self.device = torch.device("cpu")
+        self.device = torch.device("cpu")  # simulator.bind owns device selection
 
     def set_amplitude_modulator(self, func):
         self.amplitude_modulator = func
@@ -42,7 +37,7 @@ class PointSource(SceneObject):
             amplitude = self.amplitude
 
         v = torch.sin(torch.tensor(self.phase + self.frequency * t, device=self.device)) * amplitude
-        field[self.y, self.x] = v
+        field[self.y, self.x] += v * getattr(self, "dt", 1.0)**2 / getattr(self, "dx", 1.0)**2
 
     def render_visualization(self, image: np.ndarray):
         """ renders a visualization of the scene object to the image """
@@ -68,12 +63,7 @@ class LineSource(SceneObject):
         self.amplitude = amplitude
         self.phase = phase
         self.amplitude_modulator = amp_modulator
-        if torch.cuda.is_available():
-            self.device = torch.device("cuda")
-        elif torch.backends.mps.is_available():
-            self.device = torch.device("mps")
-        else:
-            self.device = torch.device("cpu")
+        self.device = torch.device("cpu")  # simulator.bind owns device selection
 
     def set_amplitude_modulator(self, func):
         self.amplitude_modulator = func
@@ -108,7 +98,7 @@ class LineSource(SceneObject):
             # Use these valid indices to update the field directly
             valid_y_coords = y_coords[valid_indices]
             valid_x_coords = x_coords[valid_indices]
-            field[valid_y_coords, valid_x_coords] = v
+            field[valid_y_coords, valid_x_coords] += v * getattr(self, "dt", 1.0)**2 / getattr(self, "dx", 1.0)
 
     def render_visualization(self, image: np.ndarray):
         """ renders a visualization of the scene object to the image """

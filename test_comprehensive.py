@@ -5,7 +5,7 @@ Validates all components and examples work correctly.
 """
 import sys
 import os
-sys.path.insert(0, '/Users/sebastian/Documents/VSCode/WaveSimulator2D')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import torch
 import numpy as np

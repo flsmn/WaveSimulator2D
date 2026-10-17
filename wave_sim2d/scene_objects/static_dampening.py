@@ -15,12 +15,7 @@ class StaticDampening(SceneObject):
         @param dampening_field: A NxM array with dampening factors (1.0 equals no dampening) of the same size as the simulation domain.
         @param pml_thickness: Thickness of the Perfectly Matched Layer (PML) at the boundaries to prevent reflections.
         """
-        if torch.cuda.is_available():
-            self.device = torch.device("cuda")
-        elif torch.backends.mps.is_available():
-            self.device = torch.device("mps")
-        else:
-            self.device = torch.device("cpu")
+        self.device = torch.device("cpu")  # simulator.bind owns device selection
         w = dampening_field.shape[1]
         h = dampening_field.shape[0]
         self.d = torch.ones((h, w), dtype=torch.float32, device=self.device)
