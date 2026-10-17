@@ -26,12 +26,21 @@ class PreparedScene:
 
 
 def polygon_mask(grid, vertices):
-    x, y = np.meshgrid((np.arange(grid.nx)+0.5)*grid.dx, (np.arange(grid.ny)+0.5)*grid.dx)
-    inside = np.zeros(grid.shape, dtype=bool)
+    # Rasterize only the polygon's padded bounding box; coordinates and the
+    # point-in-polygon rule stay bit-for-bit identical to the full-grid path.
+    ix0=max(0,math.floor(min(p[0] for p in vertices)/grid.dx)-1)
+    iy0=max(0,math.floor(min(p[1] for p in vertices)/grid.dx)-1)
+    ix1=min(grid.nx,math.ceil(max(p[0] for p in vertices)/grid.dx)+1)
+    iy1=min(grid.ny,math.ceil(max(p[1] for p in vertices)/grid.dx)+1)
+    result=np.zeros(grid.shape,dtype=bool)
+    if ix0>=ix1 or iy0>=iy1:return result
+    x,y=np.meshgrid((np.arange(ix0,ix1)+.5)*grid.dx,(np.arange(iy0,iy1)+.5)*grid.dx)
+    inside=np.zeros(x.shape,dtype=bool)
     for (ax, ay), (bx, by) in zip(vertices, vertices[1:] + vertices[:1]):
         if ay != by:
             inside ^= ((ay > y) != (by > y)) & (x < (bx-ax)*(y-ay)/(by-ay)+ax)
-    return inside
+    result[iy0:iy1,ix0:ix1]=inside
+    return result
 
 
 def _point_weights(grid, point):
