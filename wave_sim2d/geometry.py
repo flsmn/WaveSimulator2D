@@ -98,9 +98,26 @@ def prepare_scene(grid: Grid, materials=(), walls=(), sources=()):
             warnings.append("Fewer than 12 cells per shortest material wavelength; accuracy is unverified.")
         prepared.append(PreparedSource(indices, np.array(list(weights.values()), dtype=np.float32), source.omega, source.amplitude, source.phase))
     # Freeze CPU inputs. A solver always owns its own device copies.
+    border=border.astype(np.float32)
     arrays = [n, gamma, border, wall_mask]
     for s in prepared:
         arrays.extend((s.indices, s.weights))
     for array in arrays:
         array.setflags(write=False)
-    return PreparedScene(grid, n, gamma, border.astype(np.float32), wall_mask, tuple(prepared), tuple(dict.fromkeys(warnings)))
+    return PreparedScene(grid, n, gamma, border, wall_mask, tuple(prepared), tuple(dict.fromkeys(warnings)))
+
+
+def lens_vertices(x,y,radius,aperture,angle=0.0):
+    """Symmetric biconvex contour, zero edge thickness, independent of grid."""
+    from .config import finite
+    for value,name in ((x,'Lens x'),(y,'Lens y'),(angle,'Lens angle')): finite(value,name)
+    finite(radius,'Lens radius',positive=True)
+    finite(aperture,'Lens aperture',positive=True)
+    if aperture >= 2*radius:
+        raise ConfigurationError('Lens aperture must be smaller than twice its radius.')
+    offset=math.sqrt(radius**2-(aperture/2)**2)
+    yy=np.linspace(-aperture/2,aperture/2,161)
+    left=[(offset-math.sqrt(radius**2-v*v),v) for v in yy]
+    right=[(-offset+math.sqrt(radius**2-v*v),v) for v in yy[-2:0:-1]]
+    c,s=math.cos(angle),math.sin(angle)
+    return tuple((x+a*c-b*s,y+a*s+b*c) for a,b in left+right)

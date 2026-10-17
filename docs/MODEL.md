@@ -21,3 +21,11 @@ Fewer than 12 cells per shortest material wavelength produces a warning, not a p
 ## Compatibility
 
 Historical `WaveSimulator2D(w,h,scene_objects)` examples keep their imports, but now use the calibrated stencil, dt=.5 dx by default, one simulator-owned device, additive point/line excitation and complete `reset_time()`. Frequency in those legacy objects remains angular frequency. Old images, dynamic strain objects, per-step damping and legacy point/line discretization are outside the Studio contract and T01–T04 acceptance. Studio calls `prepare_scene()` and `WaveSimulator2D.from_scene()`; both paths share this one solver. Existing example results will differ and are not accuracy references. OpenCV and Matplotlib are optional example dependencies.
+
+## Measurement contract (0.1.0.dev2 / E08)
+
+At most sixteen passive detectors sample the bilinearly interpolated **field square** at fixed project coordinates after every numerical step. This avoids cancellation from interpolating oppositely signed adjacent field values before squaring. Line samples include both endpoints; their physical positions and distance axis are stored. Detector interpolation indices, weights and sums reside on the same device as the solver.
+
+Each detector has settling time and a finite window measured from its acknowledged activation time. Defaults are 32 and 16 project time units, both editable. These are starting suggestions, not an automatic claim of steady state; propagation and beat periods may require longer windows. Each step contributes its endpoint sample weighted by the overlap of that step interval with the measurement window, including fractional first/last intervals. Completed values remain frozen. Sample count and numerical dt describe the actual temporal sampling. Only the changed detector's accumulator is replaced at a block boundary; unchanged detectors retain their state. Reset clears all accumulators.
+
+The full-field intensity view is a bounded exponential live preview (physical time constant 4). It is explicitly separate from finite-window detector measurements and is never used for quantitative CSV or held references. Display cadence, color scale, contrast and discarded frames have no influence on either numerical sampling or raw results. No field history is stored.

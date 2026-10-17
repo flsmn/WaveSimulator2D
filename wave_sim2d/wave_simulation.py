@@ -7,6 +7,7 @@ import math
 import numpy as np
 import torch
 import torch.nn.functional as F
+from .measurements import Measurements
 from .config import BackendError, ConfigurationError, NumericalError, Grid, KERNEL_SCALE
 
 
@@ -72,6 +73,7 @@ class WaveSimulator2D:
         for obj in self.scene_objects:
             obj.bind(self.device, self.dt, self.dx)
         self._sources = []
+        self.measurements = Measurements(self.grid,self.device)
         self._prepared = False
         self.steps = 0
         self.t = 0.0
@@ -105,6 +107,8 @@ class WaveSimulator2D:
         self.u_prev.copy_(self.u)
         self.steps = 0
         self.t = 0.0
+        if hasattr(self,"measurements"):
+            self.measurements.reset()
 
     def reset_time(self):
         """Deprecated compatibility name: now performs a complete reset."""
@@ -136,6 +140,7 @@ class WaveSimulator2D:
         self.u_prev, self.u = self.u, nxt
         self.steps += 1
         self.t = self.steps*self.dt
+        self.measurements.update(self.u,self.t,self.dt)
 
     def step(self, count=1):
         if type(count) is not int or count < 1 or count > 10000:
