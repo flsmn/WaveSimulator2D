@@ -1,4 +1,4 @@
-"""Passive finite-window intensity measurements, sampled on every solver step."""
+"""Passive windowed intensity and signed live field samples at detector positions."""
 from dataclasses import dataclass
 import math
 import numpy as np
@@ -58,8 +58,16 @@ class Accumulator:
                 self.weights.append(torch.tensor(((1-frac[:,0]) if dx==0 else frac[:,0])*((1-frac[:,1]) if dy==0 else frac[:,1]),device=device,dtype=torch.float32))
         self.total=torch.zeros(spec.samples,device=device)
         self.live=torch.zeros_like(self.total)
+        self.live_field=torch.zeros_like(self.total)
+        self.field_time=activated
+
+    def sample_field(self,field,t):
+        flat=field.view(-1)
+        self.live_field=sum(flat[i]*w for i,w in zip(self.indices,self.weights))
+        self.field_time=t
 
     def update(self,field,t,dt):
+        self.sample_field(field,t)
         # Interpolate field squared (intensity at cell centres), not field then square.
         flat=field.view(-1)
         self.live=sum(flat[i].square()*w for i,w in zip(self.indices,self.weights))
@@ -74,7 +82,8 @@ class Accumulator:
         status='complete' if self.elapsed >= self.spec.window-1e-9 else 'settling' if self.last_time < self.begin else 'measuring'
         values=(self.total/self.elapsed if self.elapsed else self.live).detach().cpu().numpy().copy()
         values.setflags(write=False)
-        return {'detector_id':self.spec.id,'measurement_revision':self.spec.revision,'status':status,'activated':self.activated,'begin':self.begin,'duration':self.spec.window,'elapsed':self.elapsed,'sample_count':self.count,'sample_interval':self.sample_interval,'method':'bilinear field-square, endpoint time quadrature with fractional boundary weights','axis':self.axis.tolist(),'positions':self.positions.tolist(),'values':values.tolist()}
+        field_values=self.live_field.detach().cpu().tolist()
+        return {'detector_id':self.spec.id,'measurement_revision':self.spec.revision,'status':status,'activated':self.activated,'begin':self.begin,'duration':self.spec.window,'elapsed':self.elapsed,'sample_count':self.count,'sample_interval':self.sample_interval,'method':'bilinear field-square, endpoint time quadrature with fractional boundary weights','axis':self.axis.tolist(),'positions':self.positions.tolist(),'values':values.tolist(),'field_values':field_values,'field_time':self.field_time}
 
 
 class Measurements:
@@ -85,7 +94,7 @@ class Measurements:
         self.intensity=torch.zeros(grid.shape,device=device)
         self.intensity_time=0.0
 
-    def configure(self,specs,t):
+    def configure(self,specs,t,field=None):
         specs=tuple(specs)
         if len(specs)>self.MAX_DETECTORS or len({s.id for s in specs})!=len(specs):
             raise ConfigurationError('At most 16 distinct detectors are supported.')
@@ -95,6 +104,8 @@ class Measurements:
             old=self.detectors.get(spec.id)
             replacements[spec.id]=old if old and old.spec==spec else Accumulator(spec,self.grid,self.device,t)
         self.detectors=replacements
+        if field is not None:
+            for detector in self.detectors.values():detector.sample_field(field,t)
 
     def update(self,field,t,dt):
         # Bounded live intensity preview: exponential decay in physical time.
@@ -103,10 +114,10 @@ class Measurements:
         self.intensity_time=t
         for detector in self.detectors.values(): detector.update(field,t,dt)
 
-    def reset(self):
+    def reset(self,field=None):
         specs=[d.spec for d in self.detectors.values()]
         self.detectors={}
-        self.configure(specs,0)
+        self.configure(specs,0,field=field)
         self.intensity.zero_()
         self.intensity_time=0
 

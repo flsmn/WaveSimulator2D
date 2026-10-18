@@ -16,7 +16,7 @@ def threads():
 def test_import_does_not_load_optional_visualizer():
     import sys
     assert 'wave_sim2d.wave_visualizer' not in sys.modules
-    assert __version__ == '0.1.0.dev4'
+    assert __version__ == '0.1.0.dev5'
 
 
 def test_invalid_grid_initial_state_and_device():

@@ -108,7 +108,7 @@ class WaveSimulator2D:
         self.steps = 0
         self.t = 0.0
         if hasattr(self,"measurements"):
-            self.measurements.reset()
+            self.measurements.reset(field=self.u)
 
     def reset_time(self):
         """Deprecated compatibility name: now performs a complete reset."""
