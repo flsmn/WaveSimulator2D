@@ -1,5 +1,7 @@
 # E07 physical validation protocol (v1)
 
+Historical demonstration protocol. The 18 October [tolerance review](../docs/TOLERANCE_REVIEW.md) finds its broad limits insufficient for quantitative-release accuracy. Keep the frozen v1 values for historical reproduction; proposed stricter goals require a new versioned protocol and suitable references before activation.
+
 Run `python validation/run_references.py --output docs/physical-results.json` from the engine repository with the Studio environment. CPU, float32, Courant .5 unless noted. `tolerances.json` was committed before the first reference run. These exploratory limits apply to the four configurations only, not to arbitrary user scenes or final quality presets.
 
 - **T01:** Dirichlet sine modes provide known spatial wavevectors on a square domain; measured temporal recurrence gives phase speed for almost axial and diagonal modes at two grids. A driven point source is demodulated after arrival; phase slope gives wavelength. Point forcing strength is compared across two grids. Additive/antiphase and an incoming source-free wave are checked separately by `tests/test_core.py`.

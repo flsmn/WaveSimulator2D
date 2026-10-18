@@ -1,0 +1,156 @@
+{
+  "review_date": "2026-10-18",
+  "engine": "0.1.0.dev4",
+  "engine_commit": "10f7ce9",
+  "inputs": [
+    "physical-results-dev4-review-input.json",
+    "../../WaveStudio/docs/quality-lens-results.json",
+    "../validation/tolerances.json"
+  ],
+  "policy_changed": false,
+  "legacy_v1_status": "Historical demonstration thresholds, not quantitative-release accuracy certification. Original reports and limits remain unchanged.",
+  "proposed_targets_status": "Reviewer engineering targets for future quantitative validation; not external standards, not activated, not new accuracy certification.",
+  "counterfactual_note": "Same stored metrics compared with proposed values only. Passing does not validate their references. Slit and lens proposals require independent references matching finite-aperture scalar-wave scenes, so failing these old approximate-reference comparisons does not establish a solver defect. Grid differences are not absolute error estimates.",
+  "counterfactual_metrics": [
+    {
+      "metric": "speed_error",
+      "test": "T01",
+      "measured": 0.0040523484103144325,
+      "legacy_limit": 0.02,
+      "proposed_limit": 0.005,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": true
+    },
+    {
+      "metric": "driven_wavelength_error",
+      "test": "T01",
+      "measured": 0.008607583056789325,
+      "legacy_limit": 0.05,
+      "proposed_limit": 0.01,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": true
+    },
+    {
+      "metric": "point_grid_amplitude_difference",
+      "test": "T01",
+      "measured": 0.004483728369425344,
+      "legacy_limit": 0.15,
+      "proposed_limit": 0.02,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": true
+    },
+    {
+      "metric": "line_grid_amplitude_difference",
+      "test": "T01",
+      "measured": 0.02879764795101103,
+      "legacy_limit": 0.15,
+      "proposed_limit": 0.02,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": false
+    },
+    {
+      "metric": "refraction_angle_difference",
+      "test": "T02",
+      "measured": 0.6459677937432673,
+      "legacy_limit": 3.0,
+      "proposed_limit": 1.0,
+      "unit": "degrees",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": true
+    },
+    {
+      "metric": "damping_rate_error",
+      "test": "T02",
+      "measured": 3.832958964444799e-06,
+      "legacy_limit": 0.05,
+      "proposed_limit": 0.001,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": true
+    },
+    {
+      "metric": "boundary_return_amplitude",
+      "test": "T02",
+      "measured": 0.009040631212166687,
+      "legacy_limit": 0.08,
+      "proposed_limit": 0.01,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": true
+    },
+    {
+      "metric": "double_slit_minimum_difference",
+      "test": "T03",
+      "measured": 0.06722732522904906,
+      "legacy_limit": 0.15,
+      "proposed_limit": 0.02,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": false
+    },
+    {
+      "metric": "double_slit_symmetry",
+      "test": "T03",
+      "measured": 2.11883293637415e-07,
+      "legacy_limit": 0.03,
+      "proposed_limit": 0.001,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": true
+    },
+    {
+      "metric": "lens_paraxial_difference",
+      "test": "T04",
+      "measured": 0.18499999999999994,
+      "legacy_limit": 0.2,
+      "proposed_limit": 0.02,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": false
+    },
+    {
+      "metric": "lens_two_grid_shift",
+      "test": "T04",
+      "measured": 0.06999999999999995,
+      "legacy_limit": 0.1,
+      "proposed_limit": 0.01,
+      "unit": "relative",
+      "legacy_passed": true,
+      "meets_proposed_number_on_same_old_metric": false
+    }
+  ],
+  "measurement_resolution": {
+    "lens_axial_sample_spacing": 0.05883395169153366,
+    "lens_axial_spacing_fraction_of_reference": 0.0025,
+    "fine_lens_reported_shift_fraction": 0.002499999999999955,
+    "fine_lens_shift_in_sample_intervals": 0.999999999999982,
+    "double_slit_sample_spacing": 0.0625,
+    "double_slit_half_bin_fraction_of_reference": 0.008328327453312061
+  },
+  "interpretation_examples": {
+    "amplitude_15pct_positive_intensity_change": 0.3224999999999998,
+    "lens_20pct_allowed_distance": 4.706716135322693,
+    "lens_shortest_wavelength_cells_coarse": [
+      5.333333333333333,
+      6.666666666666667
+    ],
+    "local_speed_error_2pct_approx_phase_error_after_64_wavelengths_rad": 8.042477193189871,
+    "example_phase_budget_rad": 0.05,
+    "example_phase_budget_approx_required_relative_speed_error_64_wavelengths": 0.00012433979929054323
+  },
+  "findings": [
+    "T01 amplitude is a two-grid difference at one probe, not an absolute Green-function amplitude error.",
+    "T01 driven wavelength discrepancy increases from 0.606% to0.861% on refinement; accuracy of this estimator is not established by these two values.",
+    "T03 finite-width/thickness slits and point-source illumination are compared with two ideal point apertures.",
+    "T04 finite-wave axial maximum is compared with paraxial ray back focal length; the uncertainty of this reference for this scene is not quantified.",
+    "Two lens grids do not demonstrate observed convergence order or a bounded remaining discretization error.",
+    "Fine lens shift equals one sample interval; no sub-bin peak estimator/uncertainty was reported.",
+    "No independent time-step, settling/window and domain/border uncertainty budget is established.",
+    "Studio quality checker duplicates hardcoded .15/.20 thresholds; engine incident-angle threshold also hardcoded3 degrees. Future policy updates must centralize them.",
+    "Quality phase-drift budgets pi,pi/2,pi/4 are heuristic preview budgets, not quantitative coherent-interference accuracy certification."
+  ]
+}
