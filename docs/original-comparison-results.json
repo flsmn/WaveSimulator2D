@@ -1,0 +1,119 @@
+{
+  "engine": "0.1.0.dev4",
+  "baseline_commit": "40f6c78480583e465d59c56032849e6b1efe4480",
+  "source_sha256": "300412f6a7b39c79abb1efd4ed92a8479cc1496c06bedb0879fb7a28f2b02f42",
+  "current_source_sha256": "d44af7145348e72032d7f687bd1301b6ca57e3a1e959421944e20096a50c9304",
+  "pre_pytorch_commit": "16de78f7dd308f93fbd681fbafcbf7d2fc90b03a",
+  "pre_pytorch_cupy_runtime_executed": false,
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "torch": "2.5.1",
+  "backend": "cpu",
+  "dtype": "float32",
+  "threads": 1,
+  "steps": 180,
+  "domain_length": 80,
+  "spacing": 1,
+  "method": "Homogeneous sine modes; matched interior, no sources, damping or internal walls. Old u/u_prev initialized directly to bypass its unrelated shape assertion. Historical update itself unchanged; force CPU and retain constant c=1/n.",
+  "declared_units": {
+    "old_dt": 1.0,
+    "current_dt": 0.5,
+    "results": [
+      {
+        "index": 1.0,
+        "mode": [
+          8,
+          1
+        ],
+        "reference_speed": 1.0,
+        "fork_speed": 0.560511379307557,
+        "current_speed": 0.9968310496721543,
+        "fork_relative_speed_error": 0.439488620692443,
+        "current_relative_speed_error": 0.0031689503278456987
+      },
+      {
+        "index": 1.0,
+        "mode": [
+          6,
+          6
+        ],
+        "reference_speed": 1.0,
+        "fork_speed": 0.5600309895792407,
+        "current_speed": 0.9959476515896856,
+        "fork_relative_speed_error": 0.4399690104207593,
+        "current_relative_speed_error": 0.0040523484103144325
+      },
+      {
+        "index": 1.5,
+        "mode": [
+          8,
+          1
+        ],
+        "reference_speed": 0.6666666666666666,
+        "fork_speed": 0.37340154376701856,
+        "current_speed": 0.664170646315305,
+        "fork_relative_speed_error": 0.4398976843494722,
+        "current_relative_speed_error": 0.00374403052704253
+      },
+      {
+        "index": 1.5,
+        "mode": [
+          6,
+          6
+        ],
+        "reference_speed": 0.6666666666666666,
+        "fork_speed": 0.37305265417499006,
+        "current_speed": 0.6635415125146156,
+        "fork_relative_speed_error": 0.44042101873751494,
+        "current_relative_speed_error": 0.0046877312280766414
+      }
+    ]
+  },
+  "calibrated_units": {
+    "old_dt": 1.0,
+    "current_dt": 0.5621387729022078,
+    "mapping": "t_current=sqrt(0.316)*t_fork at dx=1",
+    "results": [
+      {
+        "index": 1.0,
+        "mode": [
+          8,
+          1
+        ],
+        "reference_speed": 1.0,
+        "relative_L2": 6.381153976791268e-07,
+        "maximum_absolute_field_difference": 1.0728836059570312e-06
+      },
+      {
+        "index": 1.0,
+        "mode": [
+          6,
+          6
+        ],
+        "reference_speed": 1.0,
+        "relative_L2": 1.2704564712999205e-06,
+        "maximum_absolute_field_difference": 1.3709068298339844e-06
+      },
+      {
+        "index": 1.5,
+        "mode": [
+          8,
+          1
+        ],
+        "reference_speed": 0.6666666666666666,
+        "relative_L2": 8.101834922597746e-07,
+        "maximum_absolute_field_difference": 1.2069940567016602e-06
+      },
+      {
+        "index": 1.5,
+        "mode": [
+          6,
+          6
+        ],
+        "reference_speed": 0.6666666666666666,
+        "relative_L2": 9.072497466284658e-07,
+        "maximum_absolute_field_difference": 1.8477439880371094e-06
+      }
+    ]
+  },
+  "interpretation": "Declared-unit errors test the claimed speed scale. L2 after analytic unit calibration tests recurrence agreement, not absolute physical accuracy. No full T01-T04 old/new or native CuPy/CUDA runtime comparison is claimed. This is a measured comparison, not a new tolerance policy or release-acceptance PASS."
+}

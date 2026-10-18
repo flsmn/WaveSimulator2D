@@ -57,3 +57,7 @@ Ein hypothetisches Ersetzen der bisherigen Grenzzahl durch 2 % lässt auf dersel
 [NASA: Fehlerarten](https://www.grc.nasa.gov/www/wind/valid/tutorial/errors.html) unterscheidet Modell-/Geometriefehler von räumlichen und zeitlichen Diskretisierungsfehlern. Diese Trennung fehlt in der bisherigen pauschalen Spalt-/Linsentoleranz.
 
 [Li, JOSA 72, 770–774 (1982)](https://doi.org/10.1364/JOSA.72.000770) untersucht beugungsbedingte Fokusverschiebungen bei endlicher kreisförmiger Apertur. Das stützt die Notwendigkeit einer wellenoptischen Referenz, liefert aber weder einen 20-%-Freibrief noch eine quantitative Korrektur für unsere zweidimensionale Linse.
+
+## Ergänzung zur Winkelreferenz und zum Alt/Neu-Vergleich
+
+Die tatsächlichen Fehlerformeln und ihr Nenner sind in [ERROR_METRICS.md](ERROR_METRICS.md) erläutert. T02 verwendet den vorgegebenen Einfallswinkel 25° für Snell. Mit dem tatsächlich gemessenen Einfallswinkel wären es 1,037592° statt 0,645968° Brechungsabweichung. Die vorherige Aussage, dass die gespeicherte Metrik die vorgeschlagene 1°-Zahl einhält, bleibt auf genau diese v1-Metrik begrenzt; eine strengere bedingte Brechungsprüfung ist damit nicht bestanden. Die zusätzliche Diagnose ändert keine v1-Rohdaten oder aktive Grenzwerte. Ein quellenfreier Alt/Neu-Vergleich mit analytisch angeglichener Zeitskala ist ebenfalls dokumentiert; er ist keine physikalische Gesamtfreigabe.
