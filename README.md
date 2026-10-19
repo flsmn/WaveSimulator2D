@@ -18,6 +18,41 @@ The current package is **`wave-simulator-2d==0.1.0.dev5`**, imported as **`wave_
 
 For an interactive scene editor, project files, plots and PNG/CSV exports, use [Wave Studio](https://github.com/flsmn/WaveStudio). This repository provides the solver and numerical tools.
 
+## Comparison with the original repository
+
+The original [0x23/WaveSimulator2D](https://github.com/0x23/WaveSimulator2D) provides the foundation: a GPU wave solver, extensible scene objects, image-based scenes and example visualizations. This fork builds on that work with a PyTorch backend, an explicit numerical contract, passive measurements and a separately packaged desktop workflow.
+
+The table compares the original CuPy implementation preserved at [`16de78f`](https://github.com/flsmn/WaveSimulator2D/tree/16de78f7dd308f93fbd681fbafcbf7d2fc90b03a) with this fork's current supported prepared-scene API. It describes that fixed baseline rather than making claims about future upstream changes.
+
+| Area | Original CuPy implementation | Current fork (`0.1.0.dev5`) |
+| --- | --- | --- |
+| Compute runtime | CuPy and CUDA-oriented GPU execution | PyTorch with explicit CPU, MPS and CUDA selection; CUDA hardware acceptance remains pending |
+| Scene API | Mutable scene objects render coefficients and modify the field during updates | Validated static configuration and read-only prepared scenes, with solver-owned device state; legacy objects retained separately |
+| Units and spatial operator | Pixel/time-step convention, `dt=1`, unnormalized nine-point kernel | Explicit `dx`/`dt`, reference speed `c0=1`, kernel divided by `0.316*dx²`, and a checked stability limit |
+| Excitation | Point/line objects overwrite selected field cells with their sinusoidal displacement | Additive forcing with bilinear point weights and arc-length line quadrature; amplitude has an explicit integrated-forcing meaning |
+| Damping | Per-step factors applied to the displacement increment | Nonnegative decay rates per project time, centred damping update and a physical-width border profile |
+| Reset and field access | `reset_time()` resets the clock; `get_field()` returns the live array | `reset()` restores initial state and measurements; `snapshot()` returns an owned read-only CPU copy |
+| Measurements | Visualizer field/intensity output | Passive point/line detectors, finite settling/windows, frozen mean field-square profiles, live signed samples and sampling metadata |
+| Application and packaging | Example scripts with visualization and image-based scene input | Installable engine package plus the separate [Wave Studio](https://github.com/flsmn/WaveStudio) editor, project persistence and exports |
+| Validation | Example-driven workflow | Regression suite, documented model, frozen demonstration criteria and independent reference studies with retained failures |
+
+The original's dynamic scene objects and image-driven experiments remain useful historical examples. They are outside the current static prepared-scene validation scope. Porting an experiment requires revisiting its units, source amplitudes and damping; reproducing the same input numbers does not guarantee the same physical experiment.
+
+### What the numerical comparison establishes
+
+The repository also contains a reproducible comparison against the **first PyTorch port**, [`40f6c78`](https://github.com/flsmn/WaveSimulator2D/commit/40f6c78480583e465d59c56032849e6b1efe4480), which retained the original unnormalized update. This CPU comparison is distinct from executing the original CuPy solver on NVIDIA hardware.
+
+For four homogeneous sine-mode cases (`n=1` and `n=1.5`, nearly axial and diagonal propagation), the retained [comparison report](docs/original-comparison-results.json) records:
+
+| Quantity | Historical PyTorch baseline | Calibrated engine |
+| --- | --- | --- |
+| Vacuum phase speed at each version's default time step, `dx=1` | About 0.560 against the stated reference speed 1 | About 0.996–0.997 against reference speed 1 |
+| Relative phase-speed error against `1/n`, across the four cases | About 44% | About 0.32–0.47% |
+
+These values identify a correction to the declared speed scale. They do not mean every historical field had a 44% error. After the analytic time mapping `t_current = sqrt(0.316) * t_baseline`, the relative L2 field differences after 180 steps are only **6.38e-7 to 1.27e-6**, with maximum absolute difference **1.85e-6** for unit initial amplitude. This shows that the homogeneous recurrence remains closely related after unit calibration.
+
+The retained report was generated with engine `0.1.0.dev4`; dev5 adds signed probe samples without changing the solver stencil. Reproduce the comparison with the current checkout using `python validation/compare_original.py --output /tmp/wave-original-comparison.json`. The test uses CPU/float32, one Torch thread, matched interiors and no sources, damping or internal walls. It bypasses the historical initial-field shape assertion while preserving the historical update. It establishes neither a GPU speedup nor a complete old/new comparison of slit, lens, source or boundary accuracy. See [methods and error definitions](docs/ERROR_METRICS.md) and the [open quantitative findings](docs/QUANTITATIVE_PROGRESS.md).
+
 ## Installation
 
 Clone the repository and create a Python 3.12 environment:
