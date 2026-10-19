@@ -32,7 +32,7 @@ def test_historical_mac_policy_retains_original_thresholds():
 
 
 def test_measured_incidence_exposes_previously_misleading_one_degree_claim():
-    saved = json.loads((ROOT/'docs/physical-results-dev4-review-input.json').read_text())['results']['T02']
+    saved = json.loads((ROOT/'tests/fixtures/snell-diagnostic.json').read_text())
     result = snell_diagnostics(saved['incidence_degrees'], saved['transmission_degrees'])
     assert result['nominal_angle_error_degrees'] == pytest.approx(saved['angle_error_degrees'])
     assert result['nominal_angle_error_degrees'] < 1

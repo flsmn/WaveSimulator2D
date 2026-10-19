@@ -186,7 +186,7 @@ def t04():
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument('--output',type=Path,default=Path('docs/physical-results.json'))
+    parser.add_argument('--output',type=Path,default=Path('local-results/physical-results.json'))
     parser.add_argument('--only',choices=['T01','T02','T03','T04'])
     args=parser.parse_args()
     torch.set_num_threads(1)

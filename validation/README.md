@@ -1,30 +1,48 @@
-# E07 physical validation protocol (v1)
+# Numerical validation
 
-Historical demonstration protocol. The 18 October [tolerance review](../docs/TOLERANCE_REVIEW.md) finds its broad limits insufficient for quantitative-release accuracy. Keep the frozen v1 values for historical reproduction; proposed stricter goals require a new versioned protocol and suitable references before activation.
+This directory contains reproducible numerical studies, versioned policies and selected historical evidence. The supported solver model is defined in [MODEL.md](../docs/MODEL.md). Active policies are not changed by documentation cleanup.
 
-Run `python validation/run_references.py --output docs/physical-results.json` from the engine repository with the Studio environment. CPU, float32, Courant .5 unless noted. `tolerances.json` was committed before the first reference run. These exploratory limits apply to the four configurations only, not to arbitrary user scenes or final quality presets.
+## Run checks
 
-- **T01:** Dirichlet sine modes provide known spatial wavevectors on a square domain; measured temporal recurrence gives phase speed for almost axial and diagonal modes at two grids. A driven point source is demodulated after arrival; phase slope gives wavelength. Point forcing strength is compared across two grids. Additive/antiphase and an incoming source-free wave are checked separately by `tests/test_core.py`.
-- **T02:** A long finite tilted line produces an approximately plane wave onto a vertical n=1.5 half-space. Demodulated spatial phase gradients before/after the interface give incidence/refraction angles; compare Snell's law (3° allows finite-line edge diffraction, grid error and finite observation time). The damped border is measured against an enlarged-domain reference before its return reaches the probe; reflected amplitude must be below 8%. Uniform damped sine-mode recurrence is compared at two grids with the prescribed physical decay rate (5%).
-- **T03:** A centred point source illuminates two narrow openings in a full-height three-piece wall. Compare the first minimum with the finite-distance two-point path-difference reference `r_upper-r_lower=λ/2`, not the far-field formula. Compare opposite sides for symmetry; wall cells must remain zero. The 15% position limit accommodates finite slit width, finite thickness and measurement sampling. No path around outer wall ends exists.
-- **T04:** Fixed lens = intersection of two circles of R=24, aperture=16, n=1.5, zero edge thickness. Axial thickness `2(R-sqrt(R²-(aperture/2)²))`. A finite line illuminates it. Compare the axial intensity maximum with the thick-lens paraxial back focal length `f*(1-(n-1)*d/(n*R))`, where `1/f=(n-1)*(2/R-(n-1)*d/(n*R²))`. Wavelength .8 (aperture/λ=20), central focus search bounded about the reference; 20% allows 2D diffraction and spherical aberration. Two grids (dx=.10 and .08) must shift focus by at most 10% of the reference focal length and produce ≥1.5× incident intensity. The contour and thickness rule are fixed here for future S10. The coarse grids resolve only 5.3/6.7 cells per shortest material wavelength; their broad tolerance is a demonstration limit, not a precision preset.
+Install `.[dev,validation]` in Python 3.12. Run from the engine repository:
 
-The actual scene values, raw metrics, pass/fail flags and hardware/runtime appear in the generated report. All four probes are implemented; their latest results are in docs/physical-results.json. Failed thresholds are investigated without retroactive widening. This protocol does not approve M0b on its own.
+```sh
+python -m pytest -q
+python validation/run_references.py
+python validation/compare_original.py
+python validation/quantitative_sources.py --policy validation/quantitative-v2-wide.json --output local-results/sources.json
+python validation/run_volume_references.py --policy validation/volume-reference-v1-followup.json --output local-results/volume.json
+```
 
-T02 final border configuration: short/long widths 40/80, height 40, border width 8, source x=12 from y=9 to 31, observation (14,20). The earlier six-unit border failure is retained in the initial report; no tolerance changed.
+The first two numerical runners default to ignored `local-results/`. Both accept `--output`; physical references also accept `--only T01|T02|T03|T04`. Independent source/volume runners require an explicit output path and can consume substantial time/memory. They currently return nonzero for incomplete qualification criteria.
 
-## Quantitative follow-up (18 October 2026)
+## Frozen v1 demonstration scope
 
-The v1 demonstration policy remains unchanged. The Mac preset profile now inherits
-`tolerances.json` through `mac-presets-v1.json`; Studio reads the same values.
-T02 reports nominal and measured-incidence Snell diagnostics side by side without
-changing its historical PASS definition.
+[tolerances.json](tolerances.json) was frozen before the first measurements. [mac-presets-v1.json](mac-presets-v1.json) inherits these historical values for Studio and adds its separately frozen focus-shift criterion.
 
-Independent outgoing Hankel source references and a frequency-domain volume
-reference are available as validation-only tools, with SciPy from the optional
-`validation` extra. Their separately versioned protocols do not certify the app's
-presets or replace v1 reports. The point-source subcase passes; the line-source
-and complete lens-reference qualifications currently fail specific criteria.
-See [QUANTITATIVE_PROGRESS.md](../docs/QUANTITATIVE_PROGRESS.md) for results,
-limits, preserved failures and reproducible commands. Both new runners correctly
-return a nonzero status for their currently incomplete overall scopes.
+| Reference | What is measured | Scope and limitation |
+| --- | --- | --- |
+| T01 | Sine-mode phase speed at two directions/grids; driven wavelength; point/line forcing across grids | 2% speed, 5% wavelength and 15% source-grid difference limits; no absolute field-error certificate |
+| T02 | Finite-line refraction, physical damping and border return against a larger domain | 3° nominal-angle, 5% damping and 8% return limits; measured-incidence Snell diagnostic is also reported |
+| T03 | First double-slit minimum, symmetry and wall field | 15% position criterion against a finite-distance two-point approximation; finite opening effects remain |
+| T04 | Fixed scalar lens focus and gain versus a paraxial estimate | 20% focus error, 10% grid shift and gain ≥1.5; coarse demonstration only |
+
+The historical [measurement report](DEMONSTRATIONS.md) explains configurations and the initially failed six-unit border. The final T02 geometry uses border width 8, short/long domains 40/80 × 40, source x=12 from y=9 to 31, and observation (14,20). No threshold was widened after a failed measurement.
+
+The [tolerance review](TOLERANCE_REVIEW.md) explains why these broad historical criteria do not release arbitrary slit/lens presets. Nominal and measured-incidence angle errors are distinct. Shared historical limits have since replaced duplicated constants.
+
+## Independent quantitative work
+
+- Sources: [quantitative-v2-wide.json](quantitative-v2-wide.json), outgoing Hankel point reference and continuous finite-line quadrature. The defined point subcase passes; the line case fails window/border sensitivity limits.
+- Volume reference: [volume-reference-v1-followup.json](volume-reference-v1-followup.json), singular-cell integration plus FFT/GMRES, calibrated against an analytic cylinder. The complete lens-reference qualification fails its complex-profile refinement criterion.
+- Historical recurrence: [compare_original.py](compare_original.py) executes the first PyTorch port from local Git history. It does not execute native CuPy/CUDA or prove absolute physical accuracy.
+
+The complete [quantitative progress report](../docs/QUANTITATIVE_PROGRESS.md) preserves methods, failed criteria, links to omitted intermediate reports and remaining uncertainty. Policies retain their original text and hashes, including historical path descriptions.
+
+## Evidence and regression data
+
+Selected results live in [results/](results/). [manifest.json](results/manifest.json) records original paths, pinned source links and SHA-256 hashes. Raw reports are moved byte-for-byte; embedded versions, paths and hashes describe the original run, not the current checkout. They are not regenerated by regression tests.
+
+Retained evidence includes historical physical acceptance and its initial failure, the T02 diagnostic, initial source failures, the wider source protocol, the unresolved volume follow-up and the original-engine comparison. Superseded intermediate runs remain accessible through pinned Git links in the studies.
+
+Small deterministic regression inputs live in [tests/fixtures/](../tests/fixtures/). New local results stay untracked until deliberately selected with a version, scope, environment and provenance. Never replace a failed report with a later passing result under the same identity.

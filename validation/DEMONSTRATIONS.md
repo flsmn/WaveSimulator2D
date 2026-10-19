@@ -1,8 +1,8 @@
-# Numerical validation – 17 October 2026
+# Historical demonstration measurements – 17 October 2026
 
 **Review, 18 October 2026:** the PASS statuses below belong to historical v1 demonstration criteria. The 15/20-percent limits are not a quantitative-release accuracy certification; their numerical/model/reference uncertainties were not separated. See [TOLERANCE_REVIEW.md](TOLERANCE_REVIEW.md) and the retained dev4 inputs. Quantitative slit/lens accuracy remains open. No historical threshold or result was rewritten.
 
-Engine 0.1.0.dev2; CPU float32, one Torch CPU thread, Python 3.12.12, Torch 2.5.1, macOS arm64. Raw measurements are in `physical-results.json`; the initial failed border configuration is retained in `physical-results-initial.json`. Thresholds were frozen in commit `d06d04b` before measurements. Invoke `python validation/run_references.py` from the engine repository with its installed environment. A failed/pending reference exits nonzero.
+Engine 0.1.0.dev2; CPU float32, one Torch CPU thread, Python 3.12.12, Torch 2.5.1, macOS arm64. Raw measurements are in [results/physical-results.json](results/physical-results.json); the initial failed border configuration is retained in [results/physical-results-initial.json](results/physical-results-initial.json). Thresholds were frozen in commit `d06d04b` before measurements. Invoke `python validation/run_references.py` from the engine repository with its installed environment. A failed/pending reference exits nonzero.
 
 | Reference | Measured | Frozen limit | Status |
 | --- | --- | --- | --- |

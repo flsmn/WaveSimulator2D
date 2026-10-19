@@ -1,6 +1,6 @@
 # Fehlermaße und Vergleich mit der Ausgangsengine
 
-Stand: 18. Oktober 2026, Engine 0.1.0.dev4. Diese Erläuterung beschreibt den tatsächlichen Prüfcode in [run_references.py](../validation/run_references.py), nicht einen allgemeinen Gesamtfehler der Engine. Die Grenzen/Referenzschwächen stehen in [TOLERANCE_REVIEW.md](TOLERANCE_REVIEW.md). Keine aktive Toleranz oder Solvergleichung wurde hier geändert.
+Stand: 18. Oktober 2026, Engine 0.1.0.dev4. Diese Erläuterung beschreibt den tatsächlichen Prüfcode in [run_references.py](../validation/run_references.py), nicht einen allgemeinen Gesamtfehler der Engine. Die Grenzen/Referenzschwächen stehen in [TOLERANCE_REVIEW.md](../validation/TOLERANCE_REVIEW.md). Keine aktive Toleranz oder Solvergleichung wurde hier geändert.
 
 ## Referenzabweichung
 
@@ -35,7 +35,7 @@ Reproduzierbarer Aufruf aus dem Engine-Repository:
 ../WaveStudio/.venv/bin/python validation/compare_original.py
 ```
 
-Das [Vergleichsskript](../validation/compare_original.py) lädt die tatsächliche historische PyTorch-Fortschreibung aus Git-Commit `40f6c78`. Der anschließende CUDA-Auswahlfix `5620234` änderte diese numerische Gleichung nicht. Ausgabe: [original-comparison-results.json](original-comparison-results.json), einschließlich Quellhashes und Laufzeitangaben. Der Test läuft auf CPU/float32 mit einem Torch-Thread. Er umgeht lediglich die historische fehlerhafte initial_field-Formprüfung durch direktes Setzen beider Anfangsfelder; die alte Fortschreibung wird nicht geändert. Konstante Materialkoeffizienten erfordern keine Szenen-Neurasterung.
+Das [Vergleichsskript](../validation/compare_original.py) lädt die tatsächliche historische PyTorch-Fortschreibung aus Git-Commit `40f6c78`. Der anschließende CUDA-Auswahlfix `5620234` änderte diese numerische Gleichung nicht. Ausgabe: [original-comparison-results.json](../validation/results/original-comparison-results.json), einschließlich Quellhashes und Laufzeitangaben. Der Test läuft auf CPU/float32 mit einem Torch-Thread. Er umgeht lediglich die historische fehlerhafte initial_field-Formprüfung durch direktes Setzen beider Anfangsfelder; die alte Fortschreibung wird nicht geändert. Konstante Materialkoeffizienten erfordern keine Szenen-Neurasterung.
 
 1. **Behauptete Einheitenskala prüfen:** Vier sinusförmige Eigenmoden, n=1/1,5, nahezu axial/diagonal. Bei eigenem Default-Zeitschritt ergibt die alte Engine ca. 0,560 statt 1 im Vakuum, die aktuelle ca. 0,996–0,997. Gegen c_ref=1/n sind es rund 44 % versus 0,32–0,47 %. Dies ist ein Kalibrierungsbefund zur angegebenen Geschwindigkeitsskala, kein pauschaler 44-%-Feldfehler aller alten Simulationen.
 2. **Nach analytischer Einheitenangleichung vergleichen:** Derselbe homogene quellenfreie Versuch nutzt bei dx=1 die bekannte Abbildung t_neu=sqrt(0,316)*t_alt. Im kontrollierten neuen Lauf wird deshalb dt_neu=0,56213877 verwendet; die normale Engine-Vorgabe bleibt unverändert bei dt=0,5*dx. Die alte Nullfortsetzung wird einem neuen festen Nullrand mit gleichem Innengebiet zugeordnet. Nach 180 Schritten liegen die relativen L2-Felddifferenzen zwischen 6,38e-7 und 1,27e-6, also 0,0000638–0,000127 %. Der maximale absolute Feldunterschied ist 1,85e-6 bei Anfangsamplitude 1.

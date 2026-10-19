@@ -42,7 +42,7 @@ The original's dynamic scene objects and image-driven experiments remain useful 
 
 The repository also contains a reproducible comparison against the **first PyTorch port**, [`40f6c78`](https://github.com/flsmn/WaveSimulator2D/commit/40f6c78480583e465d59c56032849e6b1efe4480), which retained the original unnormalized update. This CPU comparison is distinct from executing the original CuPy solver on NVIDIA hardware.
 
-For four homogeneous sine-mode cases (`n=1` and `n=1.5`, nearly axial and diagonal propagation), the retained [comparison report](docs/original-comparison-results.json) records:
+For four homogeneous sine-mode cases (`n=1` and `n=1.5`, nearly axial and diagonal propagation), the retained [comparison report](validation/results/original-comparison-results.json) records:
 
 | Quantity | Historical PyTorch baseline | Calibrated engine |
 | --- | --- | --- |
@@ -211,7 +211,7 @@ Install the development and validation extras, then run the regression suite:
 python -m pytest -q
 ```
 
-Tests cover configuration, scene rasterization, source behavior, reset, dispersion, detector sampling, grid budgets and independent reference operators. The older top-level `test_comprehensive.py` and `test_pytorch_port.py` scripts are historical compatibility tools; the configured pytest suite lives in `tests/`.
+Tests cover configuration, scene rasterization, source behavior, reset, dispersion, detector sampling, grid budgets and independent reference operators. The configured pytest suite lives in `tests/`. Optional legacy scene/visualizer smoke checks replace the old porting scripts; install `.[examples]` to exercise them. Small fixed inputs live in `tests/fixtures/`.
 
 ### Historical physical demonstrations
 
@@ -228,7 +228,7 @@ python validation/run_references.py --only T02 --output /tmp/wave-t02.json
 | T03 | Double-slit minimum position, symmetry and zero field in wall cells |
 | T04 | A fixed scalar lens demonstration against a paraxial back-focal estimate |
 
-These tests retain their frozen **v1 demonstration tolerances**, including broad 15%/20% slit/lens limits. Passing them does not certify general quantitative accuracy. The initial failed border case and subsequent reports remain available. T02 now reports both nominal-incidence and measured-incidence Snell diagnostics. Read the [validation report](docs/VALIDATION.md), [protocol](validation/README.md) and [tolerance review](docs/TOLERANCE_REVIEW.md) when interpreting results.
+These tests retain their frozen **v1 demonstration tolerances**, including broad 15%/20% slit/lens limits. Passing them does not certify general quantitative accuracy. The initial failed border case and subsequent reports remain available. T02 now reports both nominal-incidence and measured-incidence Snell diagnostics. Read the [validation report](validation/DEMONSTRATIONS.md), [protocol](validation/README.md) and [tolerance review](validation/TOLERANCE_REVIEW.md) when interpreting results.
 
 ### Independent quantitative follow-up
 
@@ -251,13 +251,13 @@ This reads historical code from the local Git history, so it requires a checkout
 
 ## Legacy examples and compatibility
 
-Historical scripts remain in [`wave_sim2d/examples/`](wave_sim2d/examples/), along with scene objects and an OpenCV/Matplotlib visualizer. They use the older `WaveSimulator2D(w, h, scene_objects)` interface. The calibrated stencil, default time step, additive source behavior and complete `reset_time()` semantics differ from their original implementation. Legacy frequency arguments remain angular frequencies, whereas the prepared-scene `Source` accepts wavelength.
+Historical scripts remain in [`wave_sim2d/examples/`](wave_sim2d/examples), along with scene objects and an OpenCV/Matplotlib visualizer. They use the older `WaveSimulator2D(w, h, scene_objects)` interface. The calibrated stencil, default time step, additive source behavior and complete `reset_time()` semantics differ from their original implementation. Legacy frequency arguments remain angular frequencies, whereas the prepared-scene `Source` accepts wavelength.
 
 Image-based scenes, dynamic strain objects and legacy per-step damping are outside the supported static prepared-scene contract and its physical acceptance scope. Historical images illustrate earlier experiments rather than validated current results.
 
 Some example scripts use `cv2.imshow`, which requires a GUI-capable OpenCV build. The `examples` extra installs `opencv-python-headless`, so it does not provide window display by itself. If using those scripts, choose a suitable GUI-enabled OpenCV environment and avoid installing multiple OpenCV distributions together, especially alongside Qt. Use Wave Studio for the maintained desktop workflow.
 
-The retained [PyTorch migration notes](PYTORCH_MIGRATION.md), [quick-start notes](QUICKSTART.md) and [completion report](COMPLETION_REPORT.md) describe earlier development stages and may contain superseded installation, speed or compatibility claims. The current API and model documentation take precedence.
+The original-engine comparison above and [CHANGELOG.md](CHANGELOG.md) summarize the evolution. Superseded migration/quick-start/completion reports remain in Git history.
 
 ## Repository layout and development
 
@@ -272,8 +272,8 @@ WaveSimulator2D/
 │   ├── scene_objects/        # Legacy example scene objects
 │   └── examples/             # Historical visualizer scripts
 ├── tests/                    # Current regression suite
-├── validation/               # Versioned protocols and reference runners
-├── docs/                     # Model, studies and retained raw reports
+├── validation/               # Protocols, reference runners and selected results
+├── docs/                     # Model and current numerical studies
 └── images/                   # Historical experiment images
 ```
 
@@ -282,6 +282,8 @@ Build an installable wheel with:
 ```sh
 python -m build --wheel
 ```
+
+Local runner output defaults to ignored `local-results/`. Selected reports and provenance are indexed in [validation/README.md](validation/README.md); regression tests use independent small fixtures.
 
 The wheel contains `wave_sim2d`; repository-level validation scripts and reports are separate development resources. Wave Studio pins the engine version and builds its desktop bundle from a matching engine wheel. Numerical solver work belongs here; editor, orchestration, project persistence and UI exports belong in [Wave Studio](https://github.com/flsmn/WaveStudio).
 

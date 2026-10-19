@@ -75,7 +75,7 @@ def compare(legacy, index, modes, current_dt, compare_fields):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', type=Path, default=Path('docs/original-comparison-results.json'))
+    parser.add_argument('--output', type=Path, default=Path('local-results/original-comparison-results.json'))
     args = parser.parse_args()
     torch.set_num_threads(1)
     source = git('show', f'{BASELINE}:wave_sim2d/wave_simulation.py')

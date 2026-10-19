@@ -1,0 +1,53 @@
+{
+  "note": "Selected historical evidence, moved byte-for-byte. Versions, paths and hashes inside reports describe the original run. Omitted intermediate runs remain in Git history.",
+  "reports": [
+    {
+      "path": "results/original-comparison-results.json",
+      "original_path": "docs/original-comparison-results.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/original-comparison-results.json",
+      "sha256": "411181badfb1757dec3c0b87c8367e149da72cf79a048a1fd177f128dfcbfcac"
+    },
+    {
+      "path": "results/physical-results-initial.json",
+      "original_path": "docs/physical-results-initial.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/physical-results-initial.json",
+      "sha256": "96df9609dfa29d549c2e40b7978de1ba1fda001ba9f7e20530118587961714e5"
+    },
+    {
+      "path": "results/physical-results.json",
+      "original_path": "docs/physical-results.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/physical-results.json",
+      "sha256": "2acee4a37715b84f50c8a63ba3b5b57c75be2edbe03439c4579b26aae8f33d74"
+    },
+    {
+      "path": "results/physical-t02-conditioned-diagnostic.json",
+      "original_path": "docs/physical-t02-conditioned-diagnostic.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/physical-t02-conditioned-diagnostic.json",
+      "sha256": "5fbc76daf48ecc570b00115838f2e37e1356eee57a68f90890d759e02b99049d"
+    },
+    {
+      "path": "results/quantitative-source-line-initial.json",
+      "original_path": "docs/quantitative-source-line-initial.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/quantitative-source-line-initial.json",
+      "sha256": "1228644ab38f89cb93f37f97fa572a9bc6aefc63b4597ab08c9b749f89db0562"
+    },
+    {
+      "path": "results/quantitative-source-point-initial.json",
+      "original_path": "docs/quantitative-source-point-initial.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/quantitative-source-point-initial.json",
+      "sha256": "ec7621f893e88f29b3e3f5fa1907db4f7b754ac28d6c98e3767d0dd04f45ad67"
+    },
+    {
+      "path": "results/quantitative-sources-wide.json",
+      "original_path": "docs/quantitative-sources-wide.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/quantitative-sources-wide.json",
+      "sha256": "5dd033db545b30630cc698927b5bc01dd5f7ebddae23b1605a9e0fe4fe60838b"
+    },
+    {
+      "path": "results/volume-reference-followup.json",
+      "original_path": "docs/volume-reference-followup.json",
+      "source": "https://github.com/flsmn/WaveSimulator2D/blob/bdd733e76151d8e08fa511c3b05edc6e46fc0b8f/docs/volume-reference-followup.json",
+      "sha256": "f89a24dcc4d9d81f94d9b8c238010fdb0c47d06bc8805a727f2849b5f2478765"
+    }
+  ]
+}
