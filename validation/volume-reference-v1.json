@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "frozen_date": "2026-10-18",
+  "status": "candidate-reference-qualification-only; frozen before first volume runs",
+  "method": "Midpoint Nystrom Lippmann-Schwinger, integrated square self-cell, 8x8 area fractions; independent of production time-domain solver",
+  "disk": {"radius": 1.0, "index": 1.5, "wavelength": 0.8, "spacings": [0.1, 0.05, 0.025], "probe_radii": [2.0, 4.0], "angles": 40, "series_modes": [40, 60]},
+  "lens": {"radius": 24.0, "aperture": 16.0, "index": 1.5, "centre": [30.0, 24.0], "spacings": [0.1, 0.05, 0.025], "source_start": [12.0, 7.0], "source_end": [12.0, 41.0], "wavelength": 0.8, "source_phase": 0.0, "profile_x": [43.0, 65.0], "profile_count": 1101, "source_quadrature_orders": [256, 512], "geometry_subcells": [8, 16]},
+  "limits": {"disk_finest_complex_relative_l2": 0.01, "disk_finest_maximum_absolute_error": 0.02, "disk_series_relative_change": 1e-10, "lens_last_grid_complex_relative_l2": 0.005, "lens_geometry_complex_relative_l2": 0.005, "lens_quadrature_complex_relative_l2": 1e-6, "lens_last_grid_focus_shift_over_paraxial_bfl": 0.0025, "lens_peak_fit_difference_over_paraxial_bfl": 0.0001},
+  "scope_limit": "Even a passing candidate is not a rigorous lens-reference error bound or certification of the finite-domain engine/presets. Time-domain matched comparisons and domain/time/window error budget remain required. No double-slit reference is provided."
+}

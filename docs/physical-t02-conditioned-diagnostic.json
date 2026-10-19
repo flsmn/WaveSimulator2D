@@ -1,0 +1,76 @@
+{
+  "engine": "0.1.0.dev4",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.12.12",
+  "torch": "2.5.1",
+  "backend": "cpu",
+  "dtype": "float32",
+  "tolerances": {
+    "version": 1,
+    "frozen_before_first_run": "2026-10-17",
+    "T01": {
+      "speed_relative_error": 0.02,
+      "source_wavelength_relative_error": 0.05,
+      "source_resolution_amplitude_relative_error": 0.15
+    },
+    "T02": {
+      "angle_error_degrees": 3.0,
+      "border_reflected_amplitude_ratio": 0.08,
+      "decay_rate_relative_error": 0.05
+    },
+    "T03": {
+      "wall_field_max": 1e-07,
+      "symmetry_relative_error": 0.03,
+      "first_minimum_position_relative_error": 0.15
+    },
+    "T04": {
+      "focus_position_relative_error": 0.2,
+      "grid_focus_shift_relative_error": 0.1,
+      "minimum_focus_gain": 1.5
+    }
+  },
+  "results": {
+    "T02": {
+      "passed": true,
+      "incidence_degrees": 25.622868692642722,
+      "transmission_degrees": 15.718441934901723,
+      "snell_reference_degrees": 16.36440972864499,
+      "angle_error_degrees": 0.6459677937432673,
+      "damping": [
+        {
+          "dx": 0.25,
+          "measured_gamma": 0.2000002743229768,
+          "relative_error": 1.3716148838938125e-06
+        },
+        {
+          "dx": 0.125,
+          "measured_gamma": 0.20000076659179292,
+          "relative_error": 3.832958964444799e-06
+        }
+      ],
+      "border_reflection": [
+        {
+          "dx": 0.25,
+          "relative_return_amplitude": 0.0048165850033786
+        },
+        {
+          "dx": 0.125,
+          "relative_return_amplitude": 0.009040631212166687
+        }
+      ],
+      "angle_diagnostics": {
+        "nominal_incidence_degrees": 25.0,
+        "measured_incidence_degrees": 25.622868692642722,
+        "transmission_degrees": 15.718441934901723,
+        "nominal_snell_reference_degrees": 16.364409728644986,
+        "nominal_angle_error_degrees": 0.6459677937432637,
+        "measured_incidence_snell_reference_degrees": 16.7560339708804,
+        "measured_incidence_angle_error_degrees": 1.037592035978676,
+        "incidence_estimation_deviation_degrees": 0.6228686926427223,
+        "quantitative_angle_accepted": false,
+        "note": "Conditional diagnostic only: finite illumination, fit and interface errors are not separated."
+      },
+      "elapsed_seconds": 4.404055833991151
+    }
+  }
+}

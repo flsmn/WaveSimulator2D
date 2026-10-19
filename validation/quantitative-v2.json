@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "status": "source-subprotocol-frozen-before-first-run",
+  "frozen_date": "2026-10-18",
+  "scope": "Homogeneous n=1 point and finite line forcing, specified probe points only; no slit/lens or preset certification",
+  "convention": "u=Re(U exp(i omega t)); f=A sin(omega t+phase); U_point=-A exp(i phase) H0^(2)(omega r)/4",
+  "source": {
+    "wavelength": 4.0,
+    "amplitude": 1.0,
+    "phase": 0.3,
+    "width": 64.0,
+    "height": 64.0,
+    "border_width": 8.0,
+    "border_rate": 2.0,
+    "dx_values": [0.25, 0.125, 0.0625],
+    "qualified_dx": 0.125,
+    "courant": 0.5,
+    "settle": 96.0,
+    "window": 32.0,
+    "samples_per_cycle": 32,
+    "quadrature_orders": [128, 256],
+    "point": {"start": [24.0, 32.0], "probes": [[30.0, 32.0], [32.0, 32.0], [34.0, 32.0], [30.0, 36.0], [32.0, 38.0]]},
+    "line": {"start": [20.0, 24.0], "end": [20.0, 40.0], "probes": [[28.0, 28.0], [28.0, 32.0], [30.0, 36.0], [32.0, 32.0]]},
+    "limits": {
+      "maximum_complex_relative_error": 0.02,
+      "maximum_amplitude_relative_error": 0.02,
+      "maximum_nuisance_relative_change": 0.005,
+      "maximum_reference_quadrature_relative_change": 0.000001
+    },
+    "sensitivity": {
+      "courant": 0.25,
+      "expanded_width": 80.0,
+      "expanded_height": 80.0,
+      "expanded_translation": [8.0, 8.0],
+      "wider_border": 12.0
+    }
+  },
+  "still_open": ["absolute source reference outside the qualified configuration", "material/refraction/damping error budget", "independent finite-slit reference", "independent scalar-lens reference", "three-grid slit/lens convergence and peak localization", "coherent phase requirement and quantitative preset certification"]
+}

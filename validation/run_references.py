@@ -12,6 +12,7 @@ from wave_sim2d import __version__
 from wave_sim2d.config import Grid, Material, Source, Wall, rectangle
 from wave_sim2d.geometry import prepare_scene
 from wave_sim2d.wave_simulation import WaveSimulator2D
+from reference_policy import snell_diagnostics
 
 ROOT = Path(__file__).resolve().parent
 LIMITS = json.loads((ROOT/'tolerances.json').read_text())
@@ -126,8 +127,9 @@ def t02():
             values.append(complex(zz))
         ratio=abs(values[0]-values[1])/abs(values[1])
         reflection.append({'dx':dx,'relative_return_amplitude':float(ratio)})
-    ok=abs(incident-25)<=3 and abs(transmitted-expected)<=LIMITS['T02']['angle_error_degrees'] and all(d['relative_error']<=LIMITS['T02']['decay_rate_relative_error'] for d in decay) and all(r['relative_return_amplitude']<=LIMITS['T02']['border_reflected_amplitude_ratio'] for r in reflection)
-    return {'passed':ok,'incidence_degrees':incident,'transmission_degrees':transmitted,'snell_reference_degrees':expected,'angle_error_degrees':abs(transmitted-expected),'damping':decay,'border_reflection':reflection}
+    ok=abs(incident-25)<=LIMITS['T02']['angle_error_degrees'] and abs(transmitted-expected)<=LIMITS['T02']['angle_error_degrees'] and all(d['relative_error']<=LIMITS['T02']['decay_rate_relative_error'] for d in decay) and all(r['relative_return_amplitude']<=LIMITS['T02']['border_reflected_amplitude_ratio'] for r in reflection)
+    return {'passed':ok,'incidence_degrees':incident,'transmission_degrees':transmitted,'snell_reference_degrees':expected,'angle_error_degrees':abs(transmitted-expected),'damping':decay,'border_reflection':reflection,
+            'angle_diagnostics':snell_diagnostics(incident,transmitted)}
 
 
 def t03():

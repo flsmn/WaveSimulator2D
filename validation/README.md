@@ -12,3 +12,19 @@ Run `python validation/run_references.py --output docs/physical-results.json` fr
 The actual scene values, raw metrics, pass/fail flags and hardware/runtime appear in the generated report. All four probes are implemented; their latest results are in docs/physical-results.json. Failed thresholds are investigated without retroactive widening. This protocol does not approve M0b on its own.
 
 T02 final border configuration: short/long widths 40/80, height 40, border width 8, source x=12 from y=9 to 31, observation (14,20). The earlier six-unit border failure is retained in the initial report; no tolerance changed.
+
+## Quantitative follow-up (18 October 2026)
+
+The v1 demonstration policy remains unchanged. The Mac preset profile now inherits
+`tolerances.json` through `mac-presets-v1.json`; Studio reads the same values.
+T02 reports nominal and measured-incidence Snell diagnostics side by side without
+changing its historical PASS definition.
+
+Independent outgoing Hankel source references and a frequency-domain volume
+reference are available as validation-only tools, with SciPy from the optional
+`validation` extra. Their separately versioned protocols do not certify the app's
+presets or replace v1 reports. The point-source subcase passes; the line-source
+and complete lens-reference qualifications currently fail specific criteria.
+See [QUANTITATIVE_PROGRESS.md](../docs/QUANTITATIVE_PROGRESS.md) for results,
+limits, preserved failures and reproducible commands. Both new runners correctly
+return a nonzero status for their currently incomplete overall scopes.

@@ -1,0 +1,112 @@
+{
+  "version": "2.1",
+  "status": "revised-domain-source-subprotocol-frozen-before-first-run",
+  "frozen_date": "2026-10-18",
+  "scope": "Homogeneous n=1 point and finite line forcing, specified probe points only; no slit/lens or preset certification",
+  "convention": "u=Re(U exp(i omega t)); f=A sin(omega t+phase); U_point=-A exp(i phase) H0^(2)(omega r)/4",
+  "source": {
+    "wavelength": 4.0,
+    "amplitude": 1.0,
+    "phase": 0.3,
+    "width": 96.0,
+    "height": 96.0,
+    "border_width": 16.0,
+    "border_rate": 2.0,
+    "dx_values": [
+      0.25,
+      0.125,
+      0.0625
+    ],
+    "qualified_dx": 0.0625,
+    "courant": 0.5,
+    "settle": 192.0,
+    "window": 32.0,
+    "samples_per_cycle": 32,
+    "quadrature_orders": [
+      128,
+      256
+    ],
+    "point": {
+      "start": [
+        40.0,
+        48.0
+      ],
+      "probes": [
+        [
+          46.0,
+          48.0
+        ],
+        [
+          48.0,
+          48.0
+        ],
+        [
+          50.0,
+          48.0
+        ],
+        [
+          46.0,
+          52.0
+        ],
+        [
+          48.0,
+          54.0
+        ]
+      ]
+    },
+    "line": {
+      "start": [
+        36.0,
+        40.0
+      ],
+      "end": [
+        36.0,
+        56.0
+      ],
+      "probes": [
+        [
+          44.0,
+          44.0
+        ],
+        [
+          44.0,
+          48.0
+        ],
+        [
+          46.0,
+          52.0
+        ],
+        [
+          48.0,
+          48.0
+        ]
+      ]
+    },
+    "limits": {
+      "maximum_complex_relative_error": 0.02,
+      "maximum_amplitude_relative_error": 0.02,
+      "maximum_nuisance_relative_change": 0.005,
+      "maximum_reference_quadrature_relative_change": 1e-06
+    },
+    "sensitivity": {
+      "courant": 0.25,
+      "expanded_width": 112.0,
+      "expanded_height": 112.0,
+      "expanded_translation": [
+        8.0,
+        8.0
+      ],
+      "wider_border": 20.0
+    }
+  },
+  "still_open": [
+    "absolute source reference outside the qualified configuration",
+    "material/refraction/damping error budget",
+    "independent finite-slit reference",
+    "independent scalar-lens reference",
+    "three-grid slit/lens convergence and peak localization",
+    "coherent phase requirement and quantitative preset certification"
+  ],
+  "predecessor": "quantitative-v2.json; point and line initial failures retained in docs/quantitative-source-*-initial.json",
+  "revision_reason": "Initial domain/border sensitivity exceeded the unchanged 0.5% limit; finer qualification grid separates source discretization from boundary/transient effects. Error thresholds unchanged."
+}

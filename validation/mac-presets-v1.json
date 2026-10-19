@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "scope": "Historical Mac preset demonstration; no quantitative acceptance",
+  "frozen_before_first_run": "2026-10-17",
+  "provenance": "MAC_ACCEPTANCE_PLAN.md at Studio commit 13e33d1; exact historical thresholds consolidated 2026-10-18",
+  "extends": "tolerances.json",
+  "overrides": {
+    "T04": {"grid_focus_shift_relative_error": 0.05}
+  }
+}

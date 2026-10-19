@@ -1,0 +1,901 @@
+{
+  "engine": "0.1.0.dev4",
+  "python": "3.12.12",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "numpy": "2.3.4",
+  "scipy": "1.18.1",
+  "torch": "2.5.1",
+  "device": "cpu",
+  "dtype": "float32",
+  "policy": {
+    "version": 2,
+    "status": "source-subprotocol-frozen-before-first-run",
+    "frozen_date": "2026-10-18",
+    "scope": "Homogeneous n=1 point and finite line forcing, specified probe points only; no slit/lens or preset certification",
+    "convention": "u=Re(U exp(i omega t)); f=A sin(omega t+phase); U_point=-A exp(i phase) H0^(2)(omega r)/4",
+    "source": {
+      "wavelength": 4.0,
+      "amplitude": 1.0,
+      "phase": 0.3,
+      "width": 64.0,
+      "height": 64.0,
+      "border_width": 8.0,
+      "border_rate": 2.0,
+      "dx_values": [
+        0.25,
+        0.125,
+        0.0625
+      ],
+      "qualified_dx": 0.125,
+      "courant": 0.5,
+      "settle": 96.0,
+      "window": 32.0,
+      "samples_per_cycle": 32,
+      "quadrature_orders": [
+        128,
+        256
+      ],
+      "point": {
+        "start": [
+          24.0,
+          32.0
+        ],
+        "probes": [
+          [
+            30.0,
+            32.0
+          ],
+          [
+            32.0,
+            32.0
+          ],
+          [
+            34.0,
+            32.0
+          ],
+          [
+            30.0,
+            36.0
+          ],
+          [
+            32.0,
+            38.0
+          ]
+        ]
+      },
+      "line": {
+        "start": [
+          20.0,
+          24.0
+        ],
+        "end": [
+          20.0,
+          40.0
+        ],
+        "probes": [
+          [
+            28.0,
+            28.0
+          ],
+          [
+            28.0,
+            32.0
+          ],
+          [
+            30.0,
+            36.0
+          ],
+          [
+            32.0,
+            32.0
+          ]
+        ]
+      },
+      "limits": {
+        "maximum_complex_relative_error": 0.02,
+        "maximum_amplitude_relative_error": 0.02,
+        "maximum_nuisance_relative_change": 0.005,
+        "maximum_reference_quadrature_relative_change": 1e-06
+      },
+      "sensitivity": {
+        "courant": 0.25,
+        "expanded_width": 80.0,
+        "expanded_height": 80.0,
+        "expanded_translation": [
+          8.0,
+          8.0
+        ],
+        "wider_border": 12.0
+      }
+    },
+    "still_open": [
+      "absolute source reference outside the qualified configuration",
+      "material/refraction/damping error budget",
+      "independent finite-slit reference",
+      "independent scalar-lens reference",
+      "three-grid slit/lens convergence and peak localization",
+      "coherent phase requirement and quantitative preset certification"
+    ]
+  },
+  "policy_sha256": "8d2a24870cb4792292bce724802d362c308317091ffae8b58ea84b70f2f2d419",
+  "runner_sha256": "cb6f4675f88c653fc321fb3bbc44d8b23572087b877ae17d80c575426efccaa3",
+  "engine_commit": "053195f9d8ab5c44dcfc7d52341780e081bf7a0e",
+  "selected_scope_passed": false,
+  "mac01_complete": false,
+  "results": {
+    "point": {
+      "reference": [
+        {
+          "real": 0.029533714086301167,
+          "imag": 0.05782423085121995
+        },
+        {
+          "real": -0.025748411787271674,
+          "imag": -0.05000825821720516
+        },
+        {
+          "real": 0.023121563408575754,
+          "imag": 0.04468946461345292
+        },
+        {
+          "real": 0.04101650087964768,
+          "imag": -0.04274280992015888
+        },
+        {
+          "real": 0.023121563408575754,
+          "imag": 0.04468946461345292
+        }
+      ],
+      "quadrature_relative_change": 0.0,
+      "grids": [
+        {
+          "grid": {
+            "nx": 256,
+            "ny": 256,
+            "dx": 0.25,
+            "dt": 0.125,
+            "border_width": 8.0,
+            "border_rate": 2.0,
+            "max_axis_cells": 4096
+          },
+          "source": {
+            "start": [
+              24.0,
+              32.0
+            ],
+            "end": null,
+            "wavelength": 4.0,
+            "amplitude": 1.0,
+            "phase": 0.3
+          },
+          "probes": [
+            [
+              30.0,
+              32.0
+            ],
+            [
+              32.0,
+              32.0
+            ],
+            [
+              34.0,
+              32.0
+            ],
+            [
+              30.0,
+              36.0
+            ],
+            [
+              32.0,
+              38.0
+            ]
+          ],
+          "sampling_stride_steps": 1,
+          "estimated_buffer_bytes": 4718592,
+          "first_window": [
+            {
+              "real": 0.03189471800633958,
+              "imag": 0.055232400413690694
+            },
+            {
+              "real": -0.026472006984583647,
+              "imag": -0.04755066567978825
+            },
+            {
+              "real": 0.02595207498587799,
+              "imag": 0.04095835210287697
+            },
+            {
+              "real": 0.037653367751927874,
+              "imag": -0.04482120894806163
+            },
+            {
+              "real": 0.026634556698030977,
+              "imag": 0.04216097793596991
+            }
+          ],
+          "later_window": [
+            {
+              "real": 0.031887794556411435,
+              "imag": 0.054822463671789494
+            },
+            {
+              "real": -0.02650792498812449,
+              "imag": -0.04789121151649688
+            },
+            {
+              "real": 0.025952076354070316,
+              "imag": 0.040684662359728105
+            },
+            {
+              "real": 0.0376506084723103,
+              "imag": -0.04521686640551881
+            },
+            {
+              "real": 0.026631218355439436,
+              "imag": 0.0418532292139733
+            }
+          ],
+          "double_window": [
+            {
+              "real": 0.0318912562813755,
+              "imag": 0.05502743204274008
+            },
+            {
+              "real": -0.026489965986354072,
+              "imag": -0.04772093859814255
+            },
+            {
+              "real": 0.02595207566997415,
+              "imag": 0.040821507231302526
+            },
+            {
+              "real": 0.03765198811211908,
+              "imag": -0.0450190376767902
+            },
+            {
+              "real": 0.026632887526735212,
+              "imag": 0.04200710357497159
+            }
+          ],
+          "metrics": {
+            "maximum_complex_relative_error": 0.09307609410758476,
+            "maximum_amplitude_relative_error": 0.03633869128077383,
+            "complex_relative_l2": 0.06863709940245004,
+            "maximum_phase_error_radians": 0.08731773057750294
+          },
+          "later_metrics": {
+            "maximum_complex_relative_error": 0.09746505133733656,
+            "maximum_amplitude_relative_error": 0.040928934186129085,
+            "complex_relative_l2": 0.07146502008525743,
+            "maximum_phase_error_radians": 0.09035328361391061
+          },
+          "temporal_window_relative_change": 0.006759130087135125,
+          "double_window_relative_change": 0.003379565043567207,
+          "elapsed_seconds": 0.45722904201829806
+        },
+        {
+          "grid": {
+            "nx": 512,
+            "ny": 512,
+            "dx": 0.125,
+            "dt": 0.0625,
+            "border_width": 8.0,
+            "border_rate": 2.0,
+            "max_axis_cells": 4096
+          },
+          "source": {
+            "start": [
+              24.0,
+              32.0
+            ],
+            "end": null,
+            "wavelength": 4.0,
+            "amplitude": 1.0,
+            "phase": 0.3
+          },
+          "probes": [
+            [
+              30.0,
+              32.0
+            ],
+            [
+              32.0,
+              32.0
+            ],
+            [
+              34.0,
+              32.0
+            ],
+            [
+              30.0,
+              36.0
+            ],
+            [
+              32.0,
+              38.0
+            ]
+          ],
+          "sampling_stride_steps": 2,
+          "estimated_buffer_bytes": 18874368,
+          "first_window": [
+            {
+              "real": 0.030248949303305243,
+              "imag": 0.056894837460440786
+            },
+            {
+              "real": -0.02460158003218396,
+              "imag": -0.049028042764035405
+            },
+            {
+              "real": 0.023850186268495287,
+              "imag": 0.042878416989632094
+            },
+            {
+              "real": 0.04023020797683192,
+              "imag": -0.043446260071129505
+            },
+            {
+              "real": 0.02401010481401979,
+              "imag": 0.044342984518775795
+            }
+          ],
+          "later_window": [
+            {
+              "real": 0.03024030137311167,
+              "imag": 0.05648971013368221
+            },
+            {
+              "real": -0.024635700931795467,
+              "imag": -0.04937391360980605
+            },
+            {
+              "real": 0.023846351782413535,
+              "imag": 0.04260395009818173
+            },
+            {
+              "real": 0.04022649894259193,
+              "imag": -0.043835696669679264
+            },
+            {
+              "real": 0.024007083826844456,
+              "imag": 0.04403683709772682
+            }
+          ],
+          "double_window": [
+            {
+              "real": 0.030244625338208462,
+              "imag": 0.05669227379706149
+            },
+            {
+              "real": -0.024618640481989734,
+              "imag": -0.049200978186920694
+            },
+            {
+              "real": 0.023848269025454408,
+              "imag": 0.04274118354390691
+            },
+            {
+              "real": 0.040228353459711944,
+              "imag": -0.04364097837040436
+            },
+            {
+              "real": 0.024008594320432137,
+              "imag": 0.044189910808251305
+            }
+          ],
+          "metrics": {
+            "maximum_complex_relative_error": 0.03879684208481656,
+            "maximum_amplitude_relative_error": 0.024870274572495243,
+            "complex_relative_l2": 0.024383727598996693,
+            "maximum_phase_error_radians": 0.030155386073655567
+          },
+          "later_metrics": {
+            "maximum_complex_relative_error": 0.043879596228303216,
+            "maximum_amplitude_relative_error": 0.029670869634266572,
+            "complex_relative_l2": 0.027224988016611794,
+            "maximum_phase_error_radians": 0.03281937067976518
+          },
+          "temporal_window_relative_change": 0.006577298976452431,
+          "double_window_relative_change": 0.003288649488225744,
+          "elapsed_seconds": 3.1810743750538677
+        },
+        {
+          "grid": {
+            "nx": 1024,
+            "ny": 1024,
+            "dx": 0.0625,
+            "dt": 0.03125,
+            "border_width": 8.0,
+            "border_rate": 2.0,
+            "max_axis_cells": 4096
+          },
+          "source": {
+            "start": [
+              24.0,
+              32.0
+            ],
+            "end": null,
+            "wavelength": 4.0,
+            "amplitude": 1.0,
+            "phase": 0.3
+          },
+          "probes": [
+            [
+              30.0,
+              32.0
+            ],
+            [
+              32.0,
+              32.0
+            ],
+            [
+              34.0,
+              32.0
+            ],
+            [
+              30.0,
+              36.0
+            ],
+            [
+              32.0,
+              38.0
+            ]
+          ],
+          "sampling_stride_steps": 4,
+          "estimated_buffer_bytes": 75497472,
+          "first_window": [
+            {
+              "real": 0.029803368996459,
+              "imag": 0.05730085560264622
+            },
+            {
+              "real": -0.024154323767626926,
+              "imag": -0.049495613624844836
+            },
+            {
+              "real": 0.023245368304088933,
+              "imag": 0.043369898843978884
+            },
+            {
+              "real": 0.04084349857410548,
+              "imag": -0.04308201667570395
+            },
+            {
+              "real": 0.023357771857884273,
+              "imag": 0.044846698413855246
+            }
+          ],
+          "later_window": [
+            {
+              "real": 0.029794857351772754,
+              "imag": 0.056898849325749394
+            },
+            {
+              "real": -0.02418612522081473,
+              "imag": -0.049838124214257394
+            },
+            {
+              "real": 0.02324199745112402,
+              "imag": 0.04309563200863313
+            },
+            {
+              "real": 0.04083953160580942,
+              "imag": -0.04346842471683521
+            },
+            {
+              "real": 0.02335439158699923,
+              "imag": 0.04454183243751213
+            }
+          ],
+          "double_window": [
+            {
+              "real": 0.02979911317411588,
+              "imag": 0.05709985246419779
+            },
+            {
+              "real": -0.024170224494220835,
+              "imag": -0.049666868919551105
+            },
+            {
+              "real": 0.023243682877606493,
+              "imag": 0.04323276542630602
+            },
+            {
+              "real": 0.04084151508995747,
+              "imag": -0.04327522069626958
+            },
+            {
+              "real": 0.023356081722441756,
+              "imag": 0.04469426542568368
+            }
+          ],
+          "metrics": {
+            "maximum_complex_relative_error": 0.0297699379879738,
+            "maximum_amplitude_relative_error": 0.022058122479216014,
+            "complex_relative_l2": 0.01793726734872613,
+            "maximum_phase_error_radians": 0.02147396652256917
+          },
+          "later_metrics": {
+            "maximum_complex_relative_error": 0.031766414076144195,
+            "maximum_amplitude_relative_error": 0.026890783126760853,
+            "complex_relative_l2": 0.02031387888064999,
+            "maximum_phase_error_radians": 0.02366968551372108
+          },
+          "temporal_window_relative_change": 0.006509319547199921,
+          "double_window_relative_change": 0.0032546597735999576,
+          "elapsed_seconds": 37.17626833298709
+        }
+      ],
+      "sensitivity": {
+        "later_window": 0.006577298976452431,
+        "double_window": 0.003288649488225744,
+        "half_time_step": 0.00494220820369365,
+        "expanded_domain": 0.015469213541038493,
+        "wider_border": 0.030446577299918533
+      },
+      "passed": false,
+      "status": "failed_specified_source_scope",
+      "sensitivity_runs": [
+        {
+          "grid": {
+            "nx": 512,
+            "ny": 512,
+            "dx": 0.125,
+            "dt": 0.03125,
+            "border_width": 8.0,
+            "border_rate": 2.0,
+            "max_axis_cells": 4096
+          },
+          "source": {
+            "start": [
+              24.0,
+              32.0
+            ],
+            "end": null,
+            "wavelength": 4.0,
+            "amplitude": 1.0,
+            "phase": 0.3
+          },
+          "probes": [
+            [
+              30.0,
+              32.0
+            ],
+            [
+              32.0,
+              32.0
+            ],
+            [
+              34.0,
+              32.0
+            ],
+            [
+              30.0,
+              36.0
+            ],
+            [
+              32.0,
+              38.0
+            ]
+          ],
+          "sampling_stride_steps": 4,
+          "estimated_buffer_bytes": 18874368,
+          "first_window": [
+            {
+              "real": 0.03039419510956926,
+              "imag": 0.05679607097216938
+            },
+            {
+              "real": -0.02477889054895712,
+              "imag": -0.04897804288955579
+            },
+            {
+              "real": 0.0240190722522453,
+              "imag": 0.042762789663339434
+            },
+            {
+              "real": 0.04006761519023349,
+              "imag": -0.043578510283960356
+            },
+            {
+              "real": 0.024226835608883453,
+              "imag": 0.044219954566927414
+            }
+          ],
+          "later_window": [
+            {
+              "real": 0.030385858842628653,
+              "imag": 0.05639393801878977
+            },
+            {
+              "real": -0.024812659854281556,
+              "imag": -0.04931960963775575
+            },
+            {
+              "real": 0.024015907481067494,
+              "imag": 0.042490466554871945
+            },
+            {
+              "real": 0.040064083730736465,
+              "imag": -0.04396533959461672
+            },
+            {
+              "real": 0.02422360566482255,
+              "imag": 0.04391595215118724
+            }
+          ],
+          "double_window": [
+            {
+              "real": 0.03039002697609896,
+              "imag": 0.056595004495479564
+            },
+            {
+              "real": -0.024795775201619345,
+              "imag": -0.049148826263655736
+            },
+            {
+              "real": 0.024017489866656413,
+              "imag": 0.042626628109105696
+            },
+            {
+              "real": 0.040065849460484984,
+              "imag": -0.043771924939288526
+            },
+            {
+              "real": 0.024225220636853003,
+              "imag": 0.04406795335905733
+            }
+          ],
+          "name": "half_time_step",
+          "metrics": {
+            "maximum_complex_relative_error": 0.04224185500282563,
+            "maximum_amplitude_relative_error": 0.025238544182169087,
+            "complex_relative_l2": 0.026682294017824387,
+            "maximum_phase_error_radians": 0.034310551357832585
+          },
+          "relative_change_from_baseline": 0.00494220820369365
+        },
+        {
+          "grid": {
+            "nx": 640,
+            "ny": 640,
+            "dx": 0.125,
+            "dt": 0.0625,
+            "border_width": 8.0,
+            "border_rate": 2.0,
+            "max_axis_cells": 4096
+          },
+          "source": {
+            "start": [
+              32.0,
+              40.0
+            ],
+            "end": null,
+            "wavelength": 4.0,
+            "amplitude": 1.0,
+            "phase": 0.3
+          },
+          "probes": [
+            [
+              38.0,
+              40.0
+            ],
+            [
+              40.0,
+              40.0
+            ],
+            [
+              42.0,
+              40.0
+            ],
+            [
+              38.0,
+              44.0
+            ],
+            [
+              40.0,
+              46.0
+            ]
+          ],
+          "sampling_stride_steps": 2,
+          "estimated_buffer_bytes": 29491200,
+          "first_window": [
+            {
+              "real": 0.030240499648490043,
+              "imag": 0.0573431456140995
+            },
+            {
+              "real": -0.024733322150409652,
+              "imag": -0.0486104537098841
+            },
+            {
+              "real": 0.02398422413196043,
+              "imag": 0.04362548728205355
+            },
+            {
+              "real": 0.040260421024721674,
+              "imag": -0.043048739477092965
+            },
+            {
+              "real": 0.024005628416944536,
+              "imag": 0.04459978156617667
+            }
+          ],
+          "later_window": [
+            {
+              "real": 0.030230900887656405,
+              "imag": 0.057081294346951576
+            },
+            {
+              "real": -0.024752181378640947,
+              "imag": -0.048918620269847515
+            },
+            {
+              "real": 0.023963842025543195,
+              "imag": 0.04328470380272596
+            },
+            {
+              "real": 0.04024706251830971,
+              "imag": -0.04331757438359404
+            },
+            {
+              "real": 0.02398282791680789,
+              "imag": 0.04428848471905856
+            }
+          ],
+          "double_window": [
+            {
+              "real": 0.030235700268073228,
+              "imag": 0.057212219980525565
+            },
+            {
+              "real": -0.02474275176452531,
+              "imag": -0.048764536989865805
+            },
+            {
+              "real": 0.023974033078751813,
+              "imag": 0.043455095542389764
+            },
+            {
+              "real": 0.040253741771515694,
+              "imag": -0.043183156930343525
+            },
+            {
+              "real": 0.02399422816687622,
+              "imag": 0.04444413314261759
+            }
+          ],
+          "name": "expanded_domain",
+          "metrics": {
+            "maximum_complex_relative_error": 0.03071239509789202,
+            "maximum_amplitude_relative_error": 0.03034419091821594,
+            "complex_relative_l2": 0.021016852593423813,
+            "maximum_phase_error_radians": 0.02521383325705847
+          },
+          "relative_change_from_baseline": 0.015469213541038493
+        },
+        {
+          "grid": {
+            "nx": 512,
+            "ny": 512,
+            "dx": 0.125,
+            "dt": 0.0625,
+            "border_width": 12.0,
+            "border_rate": 2.0,
+            "max_axis_cells": 4096
+          },
+          "source": {
+            "start": [
+              24.0,
+              32.0
+            ],
+            "end": null,
+            "wavelength": 4.0,
+            "amplitude": 1.0,
+            "phase": 0.3
+          },
+          "probes": [
+            [
+              30.0,
+              32.0
+            ],
+            [
+              32.0,
+              32.0
+            ],
+            [
+              34.0,
+              32.0
+            ],
+            [
+              30.0,
+              36.0
+            ],
+            [
+              32.0,
+              38.0
+            ]
+          ],
+          "sampling_stride_steps": 2,
+          "estimated_buffer_bytes": 18874368,
+          "first_window": [
+            {
+              "real": 0.030084454029028995,
+              "imag": 0.05712410306342566
+            },
+            {
+              "real": -0.02617048169411602,
+              "imag": -0.04960063373210441
+            },
+            {
+              "real": 0.023811719244114835,
+              "imag": 0.04381240931290828
+            },
+            {
+              "real": 0.040163629045728046,
+              "imag": -0.043364354586370356
+            },
+            {
+              "real": 0.02399883540311893,
+              "imag": 0.04393706551390219
+            }
+          ],
+          "later_window": [
+            {
+              "real": 0.030113380940103924,
+              "imag": 0.057176191133045576
+            },
+            {
+              "real": -0.026142461183139114,
+              "imag": -0.04954691546523351
+            },
+            {
+              "real": 0.02383918524654331,
+              "imag": 0.04386561730026058
+            },
+            {
+              "real": 0.040192470257235685,
+              "imag": -0.04331581303390984
+            },
+            {
+              "real": 0.0240272225827844,
+              "imag": 0.043983391943953856
+            }
+          ],
+          "double_window": [
+            {
+              "real": 0.030098917484566463,
+              "imag": 0.05715014709823561
+            },
+            {
+              "real": -0.02615647143862758,
+              "imag": -0.049573774598668956
+            },
+            {
+              "real": 0.023825452245329073,
+              "imag": 0.04383901330658442
+            },
+            {
+              "real": 0.04017804965148187,
+              "imag": -0.04334008381014011
+            },
+            {
+              "real": 0.02401302899295167,
+              "imag": 0.04396022872892801
+            }
+          ],
+          "name": "wider_border",
+          "metrics": {
+            "maximum_complex_relative_error": 0.022969172329840186,
+            "maximum_amplitude_relative_error": 0.008972746537759702,
+            "complex_relative_l2": 0.017405358356646215,
+            "maximum_phase_error_radians": 0.022471253706309608
+          },
+          "relative_change_from_baseline": 0.030446577299918533
+        }
+      ],
+      "qualified_dx": 0.125
+    }
+  }
+}
